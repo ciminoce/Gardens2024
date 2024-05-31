@@ -1,0 +1,49 @@
+﻿@model CategoryEditVm
+@{
+    ViewData["Title"] = "Edit Category";
+}
+<form method="post" asp-action="Edit" class="w-75">
+    <input type="hidden" asp-for="CategoryId" />
+    <div class="border p-3 bg-white">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group row">
+            <h2 class="text-info pl-3">Edit Category</h2>
+
+        </div>
+        <div class="form-group row py-2">
+            <label asp-for="CategoryName"></label>
+            <input asp-for="CategoryName" class="form-control" />
+            <span asp-validation-for="CategoryName" class="text-danger"></span>
+
+        </div>
+        <div class="form-group row py-2">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+
+        </div>
+
+        <button type="submit" class="btn btn-warning btn-block"> 
+            Edit
+        </button>
+        <a asp-action="Index" class="btn btn-success btn-block">
+            Back to List
+        </a>
+
+
+    </div>
+</form>
+@section Scripts
+{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        });
+    </script>
+}
