@@ -26,76 +26,43 @@ namespace Garden2024.Web.Controllers
                 .ToPagedList(pageNumber, pageSize);
             return View(categories);
         }
-        public IActionResult Create()
+        public IActionResult UpSert(int? id)
         {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult Create(CategoryEditVm categoryVm)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(categoryVm);
-            }
-
             if (_categoriesService == null || _mapper == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
             }
-
-            try
-            {
-                Category category = _mapper.Map<Category>(categoryVm);
-
-                if (_categoriesService.Exist(category))
-                {
-                    ModelState.AddModelError(string.Empty, "Registro duplicado!!!");
-                    return View(categoryVm);
-                }
-
-                _categoriesService.Save(category);
-                TempData["success"] = "Register successfully added";
-                return RedirectToAction("Index");
-            }
-            catch (Exception)
-            {
-                // Log the exception (ex) here as needed
-                ModelState.AddModelError(string.Empty, "An error occurred while creating the record.");
-                return View(categoryVm);
-            }
-        }
-
-        public IActionResult Edit(int? id)
-        {
+            CategoryEditVm categoryVm;
             if (id == null || id == 0)
             {
-                return NotFound();
+                categoryVm = new CategoryEditVm();
             }
-
-            if (_categoriesService == null || _mapper == null)
+            else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
-            }
-
-            try
-            {
-                Category? category = _categoriesService.GetById(id.Value);
-                if (category == null)
+                try
                 {
-                    return NotFound();
+                    Category? category = _categoriesService.GetById(id.Value);
+                    if (category == null)
+                    {
+                        return NotFound();
+                    }
+                    categoryVm = _mapper.Map<CategoryEditVm>(category);
+                    return View(categoryVm);
                 }
-                CategoryEditVm categoryVm = _mapper.Map<CategoryEditVm>(category);
-                return View(categoryVm);
+                catch (Exception ex)
+                {
+                    // Log the exception (ex) here as needed
+                    return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the record.");
+                }
+
             }
-            catch (Exception ex)
-            {
-                // Log the exception (ex) here as needed
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the record.");
-            }
+            return View(categoryVm);
+
         }
 
+
         [HttpPost]
-        public IActionResult Edit(CategoryEditVm categoryVm)
+        public IActionResult UpSert(CategoryEditVm categoryVm)
         {
             if (!ModelState.IsValid)
             {
@@ -118,7 +85,7 @@ namespace Garden2024.Web.Controllers
                 }
 
                 _categoriesService.Save(category);
-                TempData["success"] = "Record successfully edited";
+                TempData["success"] = "Record successfully added/edited";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -130,37 +97,6 @@ namespace Garden2024.Web.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-
-            if (_categoriesService == null || _mapper == null)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
-            }
-
-            try
-            {
-                Category? category = _categoriesService.GetById(id.Value);
-                if (category == null)
-                {
-                    return Json(new { success = false });
-                }
-
-                _categoriesService.Delete(category.CategoryId);
-                return Json(new { success = true });
-            }
-            catch (Exception)
-            {
-                // Log the exception (ex) here as needed
-                return Json(new { success = false, message = "An error occurred while deleting the record." });
-            }
-        }
 
     }
 }

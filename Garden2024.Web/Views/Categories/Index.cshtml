@@ -11,7 +11,7 @@
 
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="Categories" asp-action="Create" class="btn btn-primary">
+            <a asp-controller="Categories" asp-action="UpSert" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i>
                 Nuevo
             </a>
@@ -39,7 +39,7 @@
                             @Html.Raw(@item.Description)
                         </td>
                         <td>
-                            <a class="btn btn-warning" asp-controller="Categories" asp-action="Edit" asp-route-id="@item.CategoryId">
+                            <a class="btn btn-warning" asp-controller="Categories" asp-action="UpSert" asp-route-id="@item.CategoryId">
                                 <i class="bi bi-pencil-square"></i>&nbsp;
                                 Edit
                             </a>
