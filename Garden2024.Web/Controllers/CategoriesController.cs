@@ -96,7 +96,39 @@ namespace Garden2024.Web.Controllers
             }
         }
 
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            if (id is null || id==0)
+            {
+                return NotFound();
+            }
+            Category? category=_categoriesService?.GetById(id.Value);
+            if (category is null)
+            {
+                return NotFound();
+            }
+            try
+            {
+                if (_categoriesService == null || _mapper == null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
+                }
 
+                if (_categoriesService.ItsRelated(category.CategoryId))
+                {
+                    return Json(new { success = false, message="Related Record... Delete Deny!!" }); ;
+                }
+                _categoriesService.Delete(category.CategoryId);
+                return Json(new { success = true, message = "Record successfully deleted" });
+            }
+            catch (Exception)
+            {
+
+                return Json(new { success = false, message = "Couldn't delete record!!! " }); ;
+
+            }
+        }
 
     }
 }
