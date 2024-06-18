@@ -31,7 +31,6 @@ namespace Garden2024.Web.Controllers
             return View();
         }
         [HttpPost]
-        [HttpPost]
         public IActionResult Create(CategoryEditVm categoryVm)
         {
             if (!ModelState.IsValid)
