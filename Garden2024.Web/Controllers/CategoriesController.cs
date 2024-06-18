@@ -133,7 +133,7 @@ namespace Garden2024.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
             {
@@ -147,7 +147,7 @@ namespace Garden2024.Web.Controllers
 
             try
             {
-                Category? category = _categoriesService.GetById(id);
+                Category? category = _categoriesService.GetById(id.Value);
                 if (category == null)
                 {
                     return Json(new { success = false });
@@ -156,7 +156,7 @@ namespace Garden2024.Web.Controllers
                 _categoriesService.Delete(category.CategoryId);
                 return Json(new { success = true });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception (ex) here as needed
                 return Json(new { success = false, message = "An error occurred while deleting the record." });
