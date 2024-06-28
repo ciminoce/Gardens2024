@@ -4,6 +4,6 @@
     {
         public int StateId { get; set; }
         public int CountryId { get; set; }
-        public string Name { get; set; } = null!;
+        public string StateName { get; set; } = null!;
     }
 }

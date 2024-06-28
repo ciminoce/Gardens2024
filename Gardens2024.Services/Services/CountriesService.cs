@@ -1,16 +1,16 @@
-﻿using Gardens2024.Data;
-using Gardens2024.Data.Interfaces;
+﻿using Gardens2024.Data.Interfaces;
+using Gardens2024.Data;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
 
 namespace Gardens2024.Services.Services
 {
-    public class CategoriesService : ICategoriesService
+    public class CountriesService:ICountriesService
     {
-        private readonly ICategoriesRepository? _repository;
+        private readonly ICountriesRepository? _repository;
         private readonly IUnitOfWork? _unitOfWork;
 
-        public CategoriesService(ICategoriesRepository? repository,
+        public CountriesService(ICountriesRepository? repository,
             IUnitOfWork? unitOfWork)
         {
             _repository = repository;
@@ -33,22 +33,22 @@ namespace Gardens2024.Services.Services
             }
         }
 
-        public bool Exist(Category category)
+        public bool Exist(Country country)
         {
             if (_repository is null)
             {
                 throw new ApplicationException("Dependencies not loaded!!");
             }
 
-            return _repository.Exist(category);
+            return _repository.Exist(country);
         }
 
-        public List<Category>? GetAll()
+        public List<Country>? GetAll()
         {
             return _repository?.GetAll();
         }
 
-        public Category? GetById(int id)
+        public Country? GetById(int id)
         {
             return _repository?.GetById(id);
         }
@@ -63,18 +63,18 @@ namespace Gardens2024.Services.Services
             return _repository.ItsRelated(id);
         }
 
-        public void Save(Category category)
+        public void Save(Country country)
         {
             try
             {
                 _unitOfWork?.BeginTransaction();
-                if (category.CategoryId==0)
+                if (country.CountryId == 0)
                 {
-                    _repository?.Add(category);
+                    _repository?.Add(country);
                 }
                 else
                 {
-                    _repository?.Update(category);
+                    _repository?.Update(country);
                 }
                 _unitOfWork?.Commit();
 
@@ -85,5 +85,6 @@ namespace Gardens2024.Services.Services
                 throw;
             }
         }
+
     }
 }

@@ -1,55 +1,58 @@
 ﻿using AutoMapper;
 using Garden2024.Web.ViewModels.Categories;
+using Garden2024.Web.ViewModels.Countries;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
+using Gardens2024.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
 
 namespace Garden2024.Web.Controllers
 {
-    public class CategoriesController : Controller
+    public class CountriesController : Controller
     {
-        private readonly ICategoriesService? _categoriesService;
+        private readonly ICountriesService? _countriesService;
         private readonly IMapper? _mapper;
-        public CategoriesController(ICategoriesService? categoriesService,
-            IMapper mapper)
+
+        private int pageSize = 10;
+        public CountriesController(ICountriesService? countriesService,
+            IMapper? mapper)
         {
-            _categoriesService = categoriesService;
+            _countriesService = countriesService;
             _mapper = mapper;
         }
 
-        public IActionResult Index(int? page)
+        public IActionResult Index(int? page=null)
         {
             int pageNumber = page ?? 1;
-            int pageSize = 10;
-            var categories = _categoriesService?.GetAll();
-            var categoriesDto = _mapper?.Map<List<CategoryListDto>>(categories)
+            var countries = _countriesService?.GetAll();
+            var countriesDto=_mapper?.Map<List<CountryListDto>>(countries)
                 .ToPagedList(pageNumber, pageSize);
-                
-            return View(categoriesDto);
+
+            return View(countriesDto);
         }
-        public IActionResult UpSert(int? id)
-        {
-            if (_categoriesService == null || _mapper == null)
+
+        public IActionResult UpSert(int? id) {
+            if (_countriesService == null || _mapper == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
             }
-            CategoryEditVm categoryVm;
+            CountryEditVm countryVm;
             if (id == null || id == 0)
             {
-                categoryVm = new CategoryEditVm();
+                countryVm = new CountryEditVm();
             }
             else
             {
                 try
                 {
-                    Category? category = _categoriesService.GetById(id.Value);
-                    if (category == null)
+                    Country? country = _countriesService.GetById(id.Value);
+                    if (country == null)
                     {
                         return NotFound();
                     }
-                    categoryVm = _mapper.Map<CategoryEditVm>(category);
-                    return View(categoryVm);
+                    countryVm = _mapper.Map<CountryEditVm>(country);
+                    return View(countryVm);
                 }
                 catch (Exception ex)
                 {
@@ -58,35 +61,34 @@ namespace Garden2024.Web.Controllers
                 }
 
             }
-            return View(categoryVm);
+            return View(countryVm);
 
         }
 
-
         [HttpPost]
-        public IActionResult UpSert(CategoryEditVm categoryVm)
+        public IActionResult UpSert(CountryEditVm countryVm)
         {
             if (!ModelState.IsValid)
             {
-                return View(categoryVm);
+                return View(countryVm);
             }
 
-            if (_categoriesService == null || _mapper == null)
+            if (_countriesService == null || _mapper == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
             }
 
             try
             {
-                Category category = _mapper.Map<Category>(categoryVm);
+                Country Country = _mapper.Map<Country>(countryVm);
 
-                if (_categoriesService.Exist(category))
+                if (_countriesService.Exist(Country))
                 {
                     ModelState.AddModelError(string.Empty, "Record already exist");
-                    return View(categoryVm);
+                    return View(countryVm);
                 }
 
-                _categoriesService.Save(category);
+                _countriesService.Save(Country);
                 TempData["success"] = "Record successfully added/edited";
                 return RedirectToAction("Index");
             }
@@ -94,34 +96,34 @@ namespace Garden2024.Web.Controllers
             {
                 // Log the exception (ex) here as needed
                 ModelState.AddModelError(string.Empty, "An error occurred while editing the record.");
-                return View(categoryVm);
+                return View(countryVm);
             }
         }
 
         [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id is null || id==0)
+            if (id is null || id == 0)
             {
                 return NotFound();
             }
-            Category? category=_categoriesService?.GetById(id.Value);
-            if (category is null)
+            Country? Country = _countriesService?.GetById(id.Value);
+            if (Country is null)
             {
                 return NotFound();
             }
             try
             {
-                if (_categoriesService == null || _mapper == null)
+                if (_countriesService == null || _mapper == null)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
                 }
 
-                if (_categoriesService.ItsRelated(category.CategoryId))
+                if (_countriesService.ItsRelated(Country.CountryId))
                 {
-                    return Json(new { success = false, message="Related Record... Delete Deny!!" }); ;
+                    return Json(new { success = false, message = "Related Record... Delete Deny!!" }); ;
                 }
-                _categoriesService.Delete(category.CategoryId);
+                _countriesService.Delete(Country.CountryId);
                 return Json(new { success = true, message = "Record successfully deleted" });
             }
             catch (Exception)

@@ -1,17 +1,17 @@
-﻿@model IPagedList<CategoryListDto>
+﻿@model IPagedList<CountryListDto>
 @using X.PagedList
 @using X.PagedList.Mvc.Core;
 @{
-    ViewData["Title"] = "Category List";
+    ViewData["Title"] = "Country List";
 }
 <div class="container">
     <div class="row mb-3">
         <div class="col-6">
-            <h3>Category List</h3>
+            <h3>Country List</h3>
 
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="Categories" asp-action="UpSert" class="btn btn-primary">
+            <a asp-controller="Countries" asp-action="UpSert" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i>
                 Nuevo
             </a>
@@ -20,9 +20,8 @@
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th style="width:25%">Category Name</th>
-                <th style="width:50%">Description</th>
-                <th style="width:15%">Actions</th>
+                <th style="width:50%">Country</th>
+                <th style="width:25%">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -30,20 +29,17 @@
             {
                 foreach (var item in Model)
                 {
-                    <tr id="@item.CategoryId">
+                    <tr id="@item.CountryId">
                         <td>
-                            @item.CategoryName
+                            @item.CountryName
 
                         </td>
                         <td>
-                            @Html.Raw(@item.Description)
-                        </td>
-                        <td>
-                            <a class="btn btn-warning" asp-controller="Categories" asp-action="UpSert" asp-route-id="@item.CategoryId">
+                            <a class="btn btn-warning" asp-controller="Countries" asp-action="UpSert" asp-route-id="@item.CountryId">
                                 <i class="bi bi-pencil-square"></i>&nbsp;
                                 Edit
                             </a>
-                            <a onclick="Delete('/Categories/Delete/@item.CategoryId',@item.CategoryId)" class="btn btn-danger">
+                            <a onclick="Delete('/Countries/Delete/@item.CountryId',@item.CountryId)" class="btn btn-danger">
                                 <i class="bi bi-trash-fill"></i>
                                 Delete
                             </a>
@@ -55,7 +51,7 @@
             {
                 <tr>
                     <td colspan="2" class="text-center">
-                        F?uck!!! No categories added yet!
+                        F?uck!!! No Countries added yet!
 
                     </td>
                 </tr>
@@ -65,24 +61,24 @@
     </table>
     <div class="d-flex">
         @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
-           {
-               UlElementClasses = new[] { "pagination" },
-               LiElementClasses = new[] { "page-item" },
-               PageClasses = new[] { "page-link" },
-               DisplayLinkToIndividualPages = true,
-               DisplayPageCountAndCurrentLocation = false,
-               MaximumPageNumbersToDisplay = 10
-           })
+   {
+       UlElementClasses = new[] { "pagination" },
+       LiElementClasses = new[] { "page-item" },
+       PageClasses = new[] { "page-link" },
+       DisplayLinkToIndividualPages = true,
+       DisplayPageCountAndCurrentLocation = false,
+       MaximumPageNumbersToDisplay = 10
+   })
     </div>
 
 
 </div>
-@section Scripts{
+@section Scripts {
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script type="text/javascript">
 
-        function Delete(url,id) {
+        function Delete(url, id) {
             Swal.fire({
                 title: "Are you sure?",
                 text: "You won't be able to revert this!",
@@ -94,8 +90,8 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url:url,
-                        type:'DELETE',
+                        url: url,
+                        type: 'DELETE',
                         success: function (data) {
                             if (data.success) {
                                 var row = document.getElementById(id);
@@ -109,6 +105,6 @@
                     })
                 }
             });
-        }    
+        }
     </script>
 }

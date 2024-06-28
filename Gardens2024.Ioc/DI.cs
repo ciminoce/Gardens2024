@@ -14,9 +14,11 @@ namespace Gardens2024.Ioc
         public static void ConfigurarServicios(IServiceCollection servicios, IConfiguration configuration)
         {
 
+            servicios.AddScoped<ICountriesRepository, CountriesRepository>();
+            servicios.AddScoped<ICategoriesRepository,CategoriesRepository>();
 
-            servicios.AddScoped<ICategoriesRepository,
-                CategoriesRepository>();
+
+            servicios.AddScoped<ICountriesService,CountriesService>();
             servicios.AddScoped<ICategoriesService, CategoriesService>();
 
             servicios.AddScoped<IUnitOfWork, UnitOfWork>();
