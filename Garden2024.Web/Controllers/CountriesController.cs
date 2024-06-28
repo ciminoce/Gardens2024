@@ -54,7 +54,7 @@ namespace Garden2024.Web.Controllers
                     countryVm = _mapper.Map<CountryEditVm>(country);
                     return View(countryVm);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Log the exception (ex) here as needed
                     return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the record.");
@@ -92,7 +92,7 @@ namespace Garden2024.Web.Controllers
                 TempData["success"] = "Record successfully added/edited";
                 return RedirectToAction("Index");
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 // Log the exception (ex) here as needed
                 ModelState.AddModelError(string.Empty, "An error occurred while editing the record.");
