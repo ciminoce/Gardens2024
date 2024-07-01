@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using Garden2024.Web.ViewModels.Categories;
 using Garden2024.Web.ViewModels.Countries;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
-using Gardens2024.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
 
@@ -22,17 +20,18 @@ namespace Garden2024.Web.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index(int? page=null)
+        public IActionResult Index(int? page = null)
         {
             int pageNumber = page ?? 1;
             var countries = _countriesService?.GetAll();
-            var countriesDto=_mapper?.Map<List<CountryListDto>>(countries)
+            var countriesDto = _mapper?.Map<List<CountryListDto>>(countries)
                 .ToPagedList(pageNumber, pageSize);
 
             return View(countriesDto);
         }
 
-        public IActionResult UpSert(int? id) {
+        public IActionResult UpSert(int? id)
+        {
             if (_countriesService == null || _mapper == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
@@ -92,7 +91,7 @@ namespace Garden2024.Web.Controllers
                 TempData["success"] = "Record successfully added/edited";
                 return RedirectToAction("Index");
             }
-            catch (Exception )
+            catch (Exception)
             {
                 // Log the exception (ex) here as needed
                 ModelState.AddModelError(string.Empty, "An error occurred while editing the record.");
