@@ -2,7 +2,7 @@
 
 namespace Garden2024.Web.ViewModels.Countries
 {
-    public class CountryListDto
+    public class CountryListVm
     {
         public int CountryId { get; set; }
         [DisplayName("Country")]

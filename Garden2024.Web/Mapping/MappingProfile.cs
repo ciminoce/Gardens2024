@@ -16,13 +16,13 @@ namespace Garden2024.Web.Mapping
 
         private void LoadCountriesMapping()
         {
-            CreateMap<Country, CountryListDto>();
+            CreateMap<Country, CountryListVm>();
             CreateMap<Country, CountryEditVm>().ReverseMap();
         }
 
         private void LoadCategoriesMapping()
         {
-            CreateMap<Category, CategoryListDto>();
+            CreateMap<Category, CategoryListVm>();
             CreateMap<Category, CategoryEditVm>().ReverseMap();
         }
     }

@@ -23,7 +23,7 @@ namespace Garden2024.Web.Controllers
             int pageNumber = page ?? 1;
             int pageSize = 10;
             var categories = _categoriesService?.GetAll();
-            var categoriesDto = _mapper?.Map<List<CategoryListDto>>(categories)
+            var categoriesDto = _mapper?.Map<List<CategoryListVm>>(categories)
                 .ToPagedList(pageNumber, pageSize);
                 
             return View(categoriesDto);

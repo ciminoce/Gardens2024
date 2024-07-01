@@ -24,7 +24,7 @@ namespace Garden2024.Web.Controllers
         {
             int pageNumber = page ?? 1;
             var countries = _countriesService?.GetAll();
-            var countriesDto = _mapper?.Map<List<CountryListDto>>(countries)
+            var countriesDto = _mapper?.Map<List<CountryListVm>>(countries)
                 .ToPagedList(pageNumber, pageSize);
 
             return View(countriesDto);

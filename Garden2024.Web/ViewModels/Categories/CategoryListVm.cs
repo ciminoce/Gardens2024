@@ -2,7 +2,7 @@
 
 namespace Garden2024.Web.ViewModels.Categories
 {
-    public class CategoryListDto
+    public class CategoryListVm
     {
         public int CategoryId { get; set; }
         [DisplayName("Category")]
