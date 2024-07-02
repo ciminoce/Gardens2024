@@ -65,6 +65,7 @@ namespace Garden2024.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult UpSert(CountryEditVm countryVm)
         {
             if (!ModelState.IsValid)
@@ -100,6 +101,7 @@ namespace Garden2024.Web.Controllers
         }
 
         [HttpDelete]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int? id)
         {
             if (id is null || id == 0)

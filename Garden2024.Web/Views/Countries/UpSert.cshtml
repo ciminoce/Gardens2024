@@ -3,6 +3,7 @@
     ViewData["Title"] = "New/Edit Country";
 }
 <form method="post" asp-action="UpSert" class="w-75">
+    @Html.AntiForgeryToken();
     <input type="hidden" asp-for="CountryId" />
 
     <div class="border p-3 bg-white">
