@@ -5,6 +5,7 @@
     ViewData["Title"] = "Country List";
 }
 <div class="container">
+    @Html.AntiForgeryToken()
     <div class="row mb-3">
         <div class="col-6">
             <h3>Country List</h3>
@@ -92,6 +93,10 @@
                     $.ajax({
                         url: url,
                         type: 'DELETE',
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+
                         success: function (data) {
                             if (data.success) {
                                 var row = document.getElementById(id);
