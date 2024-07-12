@@ -2,6 +2,7 @@
 using Gardens2024.Data.Interfaces;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
+using System.Linq.Expressions;
 
 namespace Gardens2024.Services.Services
 {
@@ -13,54 +14,51 @@ namespace Gardens2024.Services.Services
         public CategoriesService(ICategoriesRepository? repository,
             IUnitOfWork? unitOfWork)
         {
-            _repository = repository;
-            _unitOfWork = unitOfWork;
+            _repository = repository?? throw new ArgumentException("Dependencies not set");
+            _unitOfWork = unitOfWork?? throw new ArgumentException("Dependencies not set");
         }
 
-        public void Delete(int id)
+        public void Delete(Category category)
         {
             try
             {
-                _unitOfWork?.BeginTransaction();
-                _repository?.Delete(id);
-                _unitOfWork?.Commit();
+                _unitOfWork!.BeginTransaction();
+                _repository!.Delete(category);
+                _unitOfWork!.Commit();
 
             }
             catch (Exception)
             {
-                _unitOfWork?.Rollback();
+                _unitOfWork!.Rollback();
                 throw;
             }
         }
 
+
         public bool Exist(Category category)
         {
-            if (_repository is null)
-            {
-                throw new ApplicationException("Dependencies not loaded!!");
-            }
 
-            return _repository.Exist(category);
+            return _repository!.Exist(category);
         }
 
-        public List<Category>? GetAll()
+        public Category? Get(Expression<Func<Category, bool>>? filter = null, string? propertiesNames = null, bool tracked = true)
         {
-            return _repository?.GetAll();
+            return _repository!.Get(filter, propertiesNames, tracked);
         }
 
-        public Category? GetById(int id)
+
+        public IEnumerable<Category> GetAll(Expression<Func<Category, bool>>? filter = null,
+            Func<IQueryable<Category>, IOrderedQueryable<Category>>? orderBy = null,
+            string? propertiesNames = null)
         {
-            return _repository?.GetById(id);
+            return _repository!.GetAll(filter, orderBy, propertiesNames);
         }
+
 
         public bool ItsRelated(int id)
         {
-            if (_repository is null)
-            {
-                throw new ApplicationException("Dependencies not loaded!!");
-            }
 
-            return _repository.ItsRelated(id);
+            return _repository!.ItsRelated(id);
         }
 
         public void Save(Category category)
@@ -85,5 +83,6 @@ namespace Gardens2024.Services.Services
                 throw;
             }
         }
+
     }
 }

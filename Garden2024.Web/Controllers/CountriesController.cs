@@ -23,11 +23,12 @@ namespace Garden2024.Web.Controllers
         public IActionResult Index(int? page = null)
         {
             int pageNumber = page ?? 1;
-            var countries = _countriesService?.GetAll();
-            var countriesDto = _mapper?.Map<List<CountryListVm>>(countries)
+            var countries = _countriesService?
+                .GetAll(orderBy:o=>o.OrderBy(c=>c.CountryName));
+            var countriesVm = _mapper?.Map<List<CountryListVm>>(countries)
                 .ToPagedList(pageNumber, pageSize);
 
-            return View(countriesDto);
+            return View(countriesVm);
         }
 
         public IActionResult UpSert(int? id)
@@ -45,7 +46,7 @@ namespace Garden2024.Web.Controllers
             {
                 try
                 {
-                    Country? country = _countriesService.GetById(id.Value);
+                    Country? country = _countriesService.Get(filter:c=>c.CountryId==id);
                     if (country == null)
                     {
                         return NotFound();
@@ -108,8 +109,8 @@ namespace Garden2024.Web.Controllers
             {
                 return NotFound();
             }
-            Country? Country = _countriesService?.GetById(id.Value);
-            if (Country is null)
+            Country? country = _countriesService?.Get(filter:c=>c.CountryId==id);
+            if (country is null)
             {
                 return NotFound();
             }
@@ -120,11 +121,11 @@ namespace Garden2024.Web.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
                 }
 
-                if (_countriesService.ItsRelated(Country.CountryId))
+                if (_countriesService.ItsRelated(country.CountryId))
                 {
                     return Json(new { success = false, message = "Related Record... Delete Deny!!" }); ;
                 }
-                _countriesService.Delete(Country.CountryId);
+                _countriesService.Delete(country);
                 return Json(new { success = true, message = "Record successfully deleted" });
             }
             catch (Exception)

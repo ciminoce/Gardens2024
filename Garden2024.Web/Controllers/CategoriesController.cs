@@ -22,11 +22,12 @@ namespace Garden2024.Web.Controllers
         {
             int pageNumber = page ?? 1;
             int pageSize = 10;
-            var categories = _categoriesService?.GetAll();
-            var categoriesDto = _mapper?.Map<List<CategoryListVm>>(categories)
+            var categories = _categoriesService?
+                .GetAll(orderBy:o=>o.OrderBy(c=>c.CategoryName));
+            var categoriesVm = _mapper?.Map<List<CategoryListVm>>(categories)
                 .ToPagedList(pageNumber, pageSize);
                 
-            return View(categoriesDto);
+            return View(categoriesVm);
         }
         public IActionResult UpSert(int? id)
         {
@@ -43,7 +44,7 @@ namespace Garden2024.Web.Controllers
             {
                 try
                 {
-                    Category? category = _categoriesService.GetById(id.Value);
+                    Category? category = _categoriesService.Get(filter:c=>c.CategoryId==id);
                     if (category == null)
                     {
                         return NotFound();
@@ -107,7 +108,7 @@ namespace Garden2024.Web.Controllers
             {
                 return NotFound();
             }
-            Category? category=_categoriesService?.GetById(id.Value);
+            Category? category=_categoriesService?.Get(filter: c => c.CategoryId == id);
             if (category is null)
             {
                 return NotFound();
@@ -123,7 +124,7 @@ namespace Garden2024.Web.Controllers
                 {
                     return Json(new { success = false, message="Related Record... Delete Deny!!" }); ;
                 }
-                _categoriesService.Delete(category.CategoryId);
+                _categoriesService.Delete(category);
                 return Json(new { success = true, message = "Record successfully deleted" });
             }
             catch (Exception)

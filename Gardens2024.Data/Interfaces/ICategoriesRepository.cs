@@ -2,13 +2,9 @@
 
 namespace Gardens2024.Data.Interfaces
 {
-    public interface ICategoriesRepository
+    public interface ICategoriesRepository:IGenericRepository<Category>
     {
-        List<Category>? GetAll();
-        void Add(Category category);
         void Update(Category category);
-        void Delete(int id);
-        Category? GetById(int id);
         bool Exist(Category category);
         bool ItsRelated(int id);
     }

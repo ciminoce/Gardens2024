@@ -2,6 +2,7 @@
 using Gardens2024.Data;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
+using System.Linq.Expressions;
 
 namespace Gardens2024.Services.Services
 {
@@ -13,68 +14,65 @@ namespace Gardens2024.Services.Services
         public CountriesService(ICountriesRepository? repository,
             IUnitOfWork? unitOfWork)
         {
-            _repository = repository;
-            _unitOfWork = unitOfWork;
+            _repository = repository ?? throw new ArgumentException("Dependencies not set");
+            _unitOfWork = unitOfWork ?? throw new ArgumentException("Dependencies not set");
         }
 
-        public void Delete(int id)
+        public void Delete(Country category)
         {
             try
             {
-                _unitOfWork?.BeginTransaction();
-                _repository?.Delete(id);
-                _unitOfWork?.Commit();
+                _unitOfWork!.BeginTransaction();
+                _repository!.Delete(category);
+                _unitOfWork!.Commit();
 
             }
             catch (Exception)
             {
-                _unitOfWork?.Rollback();
+                _unitOfWork!.Rollback();
                 throw;
             }
         }
 
-        public bool Exist(Country country)
-        {
-            if (_repository is null)
-            {
-                throw new ApplicationException("Dependencies not loaded!!");
-            }
 
-            return _repository.Exist(country);
+        public bool Exist(Country category)
+        {
+
+            return _repository!.Exist(category);
         }
 
-        public List<Country>? GetAll()
+        public Country? Get(Expression<Func<Country, bool>>? filter = null, string? propertiesNames = null, bool tracked = true)
         {
-            return _repository?.GetAll();
+            return _repository!.Get(filter, propertiesNames, tracked);
         }
 
-        public Country? GetById(int id)
+
+        public IEnumerable<Country> GetAll(Expression<Func<Country, bool>>? filter = null,
+            Func<IQueryable<Country>, IOrderedQueryable<Country>>? orderBy = null,
+            string? propertiesNames = null)
         {
-            return _repository?.GetById(id);
+            return _repository!.GetAll(filter, orderBy, propertiesNames);
         }
+
 
         public bool ItsRelated(int id)
         {
-            if (_repository is null)
-            {
-                throw new ApplicationException("Dependencies not loaded!!");
-            }
 
-            return _repository.ItsRelated(id);
+            return _repository!.ItsRelated(id);
         }
 
-        public void Save(Country country)
+        public void Save(Country category)
         {
             try
             {
                 _unitOfWork?.BeginTransaction();
-                if (country.CountryId == 0)
+                if (category.CountryId == 0)
                 {
-                    _repository?.Add(country);
+                    _repository?.Add(category);
                 }
                 else
                 {
-                    _repository?.Update(country);
+                    _repository?.Update(category);
                 }
                 _unitOfWork?.Commit();
 
@@ -85,6 +83,5 @@ namespace Gardens2024.Services.Services
                 throw;
             }
         }
-
     }
 }
