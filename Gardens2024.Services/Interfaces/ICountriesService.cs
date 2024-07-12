@@ -5,7 +5,7 @@ namespace Gardens2024.Services.Interfaces
 {
     public interface ICountriesService
     {
-        IEnumerable<Country>? GetAll(Expression<Func<Country, bool>>? filter = null,
+        IEnumerable<Country> GetAll(Expression<Func<Country, bool>>? filter = null,
             Func<IQueryable<Country>, IOrderedQueryable<Country>>? orderBy = null,
             string? propertiesNames = null);
         void Save(Country country);
