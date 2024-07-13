@@ -1,0 +1,122 @@
+﻿@model IPagedList<CityListVm>
+@using X.PagedList
+@using X.PagedList.Mvc.Core;
+@{
+    ViewData["Title"] = "City List";
+}
+<div class="container">
+    @Html.AntiForgeryToken()
+    <div class="row mb-3">
+        <div class="col-6">
+            <h3>City List</h3>
+
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Cities" asp-action="UpSert" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>
+                Nuevo
+            </a>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width:25%">City</th>
+                <th style="width:25%">State</th>
+                <th style="width:30%">Country</th>
+                <th style="width:20%">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr id="@item.CityId">
+                        <td>
+                            @item.CityName
+
+                        </td>
+                        <td>
+                            @item.StateName
+                        </td>
+                        <td>
+                            @item.CountryName
+                        </td>
+                        <td>
+                            <a class="btn btn-warning" asp-controller="Cities" asp-action="UpSert" asp-route-id="@item.CityId">
+                                <i class="bi bi-pencil-square"></i>&nbsp;
+                                Edit
+                            </a>
+                            <a onclick="Delete('/Admin/Cities/Delete/@item.CityId',@item.CityId)" class="btn btn-danger">
+                                <i class="bi bi-trash-fill"></i>
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">
+                        F?uck!!! No Cities added yet!
+
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    <div class="d-flex">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
+   {
+       UlElementClasses = new[] { "pagination" },
+       LiElementClasses = new[] { "page-item" },
+       PageClasses = new[] { "page-link" },
+       DisplayLinkToIndividualPages = true,
+       DisplayPageCountAndCurrentLocation = false,
+       MaximumPageNumbersToDisplay = 10
+   })
+    </div>
+
+</div>
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script type="text/javascript">
+
+        function Delete(url, id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+
+                        success: function (data) {
+                            if (data.success) {
+                                var row = document.getElementById(id);
+                                row.remove();
+                                toastr.success(data.message)
+                            }
+                            else {
+                                toastr.error(data.message)
+                            }
+                        }
+                    })
+                }
+            });
+        }
+    </script>
+}

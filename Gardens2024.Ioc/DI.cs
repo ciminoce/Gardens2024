@@ -18,12 +18,14 @@ namespace Gardens2024.Ioc
             servicios.AddScoped<ICategoriesRepository,CategoriesRepository>();
 
             servicios.AddScoped<IStatesRepository, StatesRepository>();
+            servicios.AddScoped<ICitiesRepository, CitiesRepository>();
 
 
             servicios.AddScoped<ICountriesService,CountriesService>();
             servicios.AddScoped<ICategoriesService, CategoriesService>();
 
             servicios.AddScoped<IStatesService, StatesService>();
+            servicios.AddScoped<ICitiesService, CitiesService>();
 
             servicios.AddScoped<IUnitOfWork, UnitOfWork>();
             servicios.AddDbContext<Gardens2024DbContext>(options =>

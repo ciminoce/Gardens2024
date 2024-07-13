@@ -1,0 +1,97 @@
+﻿@model CityEditVm
+@{
+    ViewData["Title"] = "New/Edit City";
+}
+<form method="post" asp-action="UpSert" class="w-75">
+
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="@Model.CityId" />
+
+    <div class="border p-3 bg-white">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group row">
+            <h2 class="text-info pl-3">@(Model.CityId == 0 ? "Add City" : "Edit City")</h2>
+
+        </div>
+        <div class="form-group row py-2">
+            <label asp-for="CityName"></label>
+            <input asp-for="CityName" class="form-control" />
+            <span asp-validation-for="CityName" class="text-danger"></span>
+
+        </div>
+        <div class="form-group row py-2">
+            <label asp-for="CountryId"></label>
+            <select asp-for="CountryId" asp-items=@Model.Countries class="form-control">
+                <option disabled selected>Select Country</option>
+            </select>
+            <span asp-validation-for="CountryId" class="text-danger"></span>
+
+        </div>
+        <div class="form-group row py-2">
+            <label asp-for="StateId"></label>
+            <select asp-for="StateId" asp-items=@Model.States class="form-control">
+                <option disabled selected>Select State</option>
+            </select>
+            <span asp-validation-for="StateId" class="text-danger"></span>
+
+        </div>
+
+        @if (Model.CityId == 0)
+        {
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-floppy2-fill"></i>
+                Create
+            </button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-warning">
+                <i class="bi bi-pencil"></i>
+                Edit
+            </button>
+
+        }
+        <a asp-action="Index" class="btn btn-success btn-block">
+            <i class="bi bi-backspace"></i>
+            Back to List
+        </a>
+
+
+    </div>
+</form>
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#CountryId").change(function () {
+                $("#StateId").empty();
+                $("#StateId").append('<option value="0">[Select State]</option>');
+
+                // console.log('Country ID:', $("#CountryId").val());
+                // debugger;
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetStates", "Cities", new { area = "Admin" })',
+                    dataType: 'json',
+                    data: {
+                        countryId: $("#CountryId").val()
+                    },
+                    success: function (states) {
+                        console.log("States received: ", states);
+                        $.each(states, function (i, state) {
+                            $("#StateId").append('<option value="' + state.stateId + '">' + state.stateName + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Error trying to load the states.' + ex);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+}
+
