@@ -9,7 +9,10 @@
         public int CategoryId { get; set; }
         public string? QuantityPerUnit { get; set; }
         public decimal UnitPrice { get; set; }
-        public float Stock { get; set; }
+        public double Stock { get; set; }
+        public string? ImageUrl { get; set; }
         public bool Suspended { get; set; }
+        public Category Category { get; set; } = null!;
+        public Supplier Supplier { get; set; } = null!;
     }
 }
