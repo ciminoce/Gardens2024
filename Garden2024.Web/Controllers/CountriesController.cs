@@ -3,7 +3,7 @@ using Garden2024.Web.ViewModels.Countries;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Garden2024.Web.Controllers
 {

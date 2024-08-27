@@ -4,7 +4,7 @@ using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Garden2024.Web.Controllers
 {
@@ -36,7 +36,7 @@ namespace Garden2024.Web.Controllers
 
             var citiesVm = _mapper?.Map<List<CityListVm>>(cities);
 
-            return View(citiesVm.ToPagedList(pageNumber, pageSize));
+            return View(citiesVm!.ToPagedList(pageNumber, pageSize));
         }
         public IActionResult UpSert(int? id)
         {

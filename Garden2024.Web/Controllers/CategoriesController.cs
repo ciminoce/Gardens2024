@@ -3,7 +3,7 @@ using Garden2024.Web.ViewModels.Categories;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Garden2024.Web.Controllers
 {
@@ -26,6 +26,7 @@ namespace Garden2024.Web.Controllers
                 .GetAll(orderBy:o=>o.OrderBy(c=>c.CategoryName));
             var categoriesVm = _mapper?.Map<List<CategoryListVm>>(categories)
                 .ToPagedList(pageNumber, pageSize);
+                
                 
             return View(categoriesVm);
         }
