@@ -3,6 +3,7 @@ using Garden2024.Web.ViewModels.Categories;
 using Garden2024.Web.ViewModels.Cities;
 using Garden2024.Web.ViewModels.Countries;
 using Garden2024.Web.ViewModels.States;
+using Garden2024.Web.ViewModels.Suppliers;
 using Gardens2024.Entities.Entities;
 
 namespace Garden2024.Web.Mapping
@@ -15,6 +16,16 @@ namespace Garden2024.Web.Mapping
             LoadCountriesMapping();
             LoadStatesMapping();
             LoadCitiesMapping();
+            LoadSuppliersMapping();
+        }
+
+        private void LoadSuppliersMapping()
+        {
+            CreateMap<Supplier, SupplierListVm>()
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country.CountryName))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State.StateName))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City.CityName));
+            CreateMap<Supplier, SupplierEditVm>().ReverseMap();
         }
 
         private void LoadCitiesMapping()
