@@ -35,7 +35,7 @@ namespace Garden2024.Web.Mapping
                 opt => opt.MapFrom(c => c.Country.CountryName))
                 .ForMember(dest => dest.StateName,
                 opt => opt.MapFrom(s => s.State.StateName));
-            CreateMap<City, CityEditVm>();
+            CreateMap<City, CityEditVm>().ReverseMap();
         }
 
         private void LoadStatesMapping()
