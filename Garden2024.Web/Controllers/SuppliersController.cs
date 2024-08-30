@@ -48,30 +48,9 @@ namespace Garden2024.Web.Controllers
             if (id == null || id == 0)
             {
                 supplierVm = new SupplierEditVm();
-                supplierVm.Countries =
-                    _countriesService!.GetAll(
-                        orderBy: o => o.OrderBy(c => c.CountryName))
-                    .Select(c => new SelectListItem
-                    {
-                        Text = c.CountryName,
-                        Value = c.CountryId.ToString()
-                    }).ToList();
-                supplierVm.States =
-                       _statesService!.GetAll(
-                           orderBy: o => o.OrderBy(c => c.StateName))
-                       .Select(c => new SelectListItem
-                       {
-                           Text = c.StateName,
-                           Value = c.StateId.ToString()
-                       }).ToList();
-                supplierVm.Cities =
-                        _citiesService!.GetAll(
-                            orderBy: o => o.OrderBy(c => c.CityName))
-                        .Select(c => new SelectListItem
-                        {
-                            Text = c.CityName,
-                            Value = c.CityId.ToString()
-                        }).ToList();
+                supplierVm.Countries =GetCountries();
+                supplierVm.States = GetCountryStates();
+                supplierVm.Cities = GetStateCities();
 
 
             }
@@ -85,32 +64,9 @@ namespace Garden2024.Web.Controllers
                         return NotFound();
                     }
                     supplierVm = _mapper!.Map<SupplierEditVm>(supplier);
-                    supplierVm.Countries =
-                        _countriesService!.GetAll(
-                            orderBy: o => o.OrderBy(c => c.CountryName))
-                        .Select(c => new SelectListItem
-                        {
-                            Text = c.CountryName,
-                            Value = c.CountryId.ToString()
-                        }).ToList();
-                    supplierVm.States =
-                          _statesService!.GetAll(
-                               filter: s => s.CountryId == supplier.CountryId,
-                               orderBy: o => o.OrderBy(c => c.StateName))
-                           .Select(c => new SelectListItem
-                           {
-                               Text = c.StateName,
-                               Value = c.StateId.ToString()
-                           }).ToList();
-                    supplierVm.Cities =
-                            _citiesService!.GetAll(
-                                filter: c => c.StateId == supplier.StateId,
-                                orderBy: o => o.OrderBy(c => c.CityName))
-                            .Select(c => new SelectListItem
-                            {
-                                Text = c.CityName,
-                                Value = c.CityId.ToString()
-                            }).ToList();
+                    supplierVm.Countries = GetCountries();
+                    supplierVm.States = GetCountryStates(supplier.CountryId);
+                    supplierVm.Cities = GetStateCities(supplier.StateId);
 
 
                     return View(supplierVm);
@@ -126,6 +82,61 @@ namespace Garden2024.Web.Controllers
 
         }
 
+        private List<SelectListItem> GetCountries()
+        {
+            return _countriesService!.GetAll(
+                                    orderBy: o => o.OrderBy(c => c.CountryName))
+                                .Select(c => new SelectListItem
+                                {
+                                    Text = c.CountryName,
+                                    Value = c.CountryId.ToString()
+                                }).ToList();
+        }
+        private List<SelectListItem> GetCountryStates(int? countryId=null)
+        {
+            IEnumerable<State>? states;
+            if (countryId is null)
+            {
+                states = _statesService!.GetAll(
+                    orderBy: o => o.OrderBy(c => c.StateName));
+            }
+            else
+            {
+                states=_statesService!.GetAll(
+                    orderBy: o => o.OrderBy(c => c.StateName),
+                    filter: s => s.CountryId == countryId);
+
+            }
+            return states.Select(c => new SelectListItem
+                   {
+                       Text = c.StateName,
+                       Value = c.StateId.ToString()
+                   }).ToList();
+
+        }
+        private List<SelectListItem> GetStateCities(int? stateId=null)
+        {
+            IEnumerable<City>? cities;
+            if (stateId is null)
+            {
+                cities = _citiesService!.GetAll(
+                    orderBy: o => o.OrderBy(c => c.CityName));
+            }
+            else
+            {
+                cities = _citiesService!.GetAll(
+                    orderBy: o => o.OrderBy(c => c.CityName),
+                    filter:c=>c.StateId==stateId);
+
+            }
+            return cities
+                .Select(c => new SelectListItem
+                {
+                    Text = c.CityName,
+                    Value = c.CityId.ToString()
+                }).ToList();
+
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -133,15 +144,9 @@ namespace Garden2024.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                supplierVm.Countries =
-                    _countriesService!
-                    .GetAll(orderBy: o => o.OrderBy(c => c.CountryName))
-                    .Select(c => new SelectListItem
-                    {
-                        Text = c.CountryName,
-                        Value = c.CountryId.ToString()
-                    })
-                    .ToList();
+                supplierVm.Countries = GetCountries();
+                supplierVm.States = GetCountryStates(supplierVm.CountryId);
+                supplierVm.Cities = GetStateCities(supplierVm.StateId);
 
                 return View(supplierVm);
             }
@@ -151,18 +156,12 @@ namespace Garden2024.Web.Controllers
             {
                 Supplier supplier = _mapper!.Map<Supplier>(supplierVm);
 
-                if (_services.Exist(supplier))
+                if (_services!.Exist(supplier))
                 {
                     ModelState.AddModelError(string.Empty, "Record already exist");
-                    supplierVm.Countries =
-                        _countriesService!
-                        .GetAll(orderBy: o => o.OrderBy(c => c.CountryName))
-                        .Select(c => new SelectListItem
-                        {
-                            Text = c.CountryName,
-                            Value = c.CountryId.ToString()
-                        })
-                        .ToList();
+                    supplierVm.Countries = GetCountries();
+                    supplierVm.States = GetCountryStates(supplier.CountryId);
+                    supplierVm.Cities = GetStateCities(supplier.StateId);
 
                     return View(supplierVm);
                 }
@@ -175,15 +174,9 @@ namespace Garden2024.Web.Controllers
             {
                 // Log the exception (ex) here as needed
                 ModelState.AddModelError(string.Empty, "An error occurred while editing the record.");
-                supplierVm.Countries =
-                        _countriesService!
-                        .GetAll(orderBy: o => o.OrderBy(c => c.CountryName))
-                        .Select(c => new SelectListItem
-                        {
-                            Text = c.CountryName,
-                            Value = c.CountryId.ToString()
-                        })
-                        .ToList();
+                supplierVm.Countries = GetCountries();
+                supplierVm.States = GetCountryStates(supplierVm.CountryId);
+                supplierVm.Cities = GetStateCities(supplierVm.StateId);
 
                 return View(supplierVm);
             }
@@ -204,12 +197,7 @@ namespace Garden2024.Web.Controllers
             }
             try
             {
-                if (_services == null || _mapper == null)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
-                }
-
-                if (_services.ItsRelated(supplier.SupplierId))
+                if (_services!.ItsRelated(supplier.SupplierId))
                 {
                     return Json(new { success = false, message = "Related Record... Delete Deny!!" }); ;
                 }

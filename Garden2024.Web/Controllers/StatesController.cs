@@ -4,6 +4,7 @@ using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using X.PagedList.Extensions;
 
 namespace Garden2024.Web.Controllers
@@ -14,8 +15,6 @@ namespace Garden2024.Web.Controllers
         private readonly ICountriesService? _countriesService;
         private readonly IMapper? _mapper;
 
-        private readonly int pageSize = 10;
-
         public StatesController(IStatesService? service,
             ICountriesService countriesService,
             IMapper? mapper)
@@ -25,15 +24,45 @@ namespace Garden2024.Web.Controllers
             _mapper = mapper ?? throw new ArgumentException("Dependencies not set"); ;
         }
 
-        public IActionResult Index(int? page)
+        public IActionResult Index(int? page, int? FilterCountryId, int pageSize=10, bool viewAll=false)
         {
             var pageNumber = page ?? 1;
-            var states = _service!
-                .GetAll(orderBy: o => o.OrderBy(s => s.StateName),
-                propertiesNames: "Country");
-            var statesVm = _mapper!.Map<List<StateListVm>>(states);
-            return View(statesVm.ToPagedList(pageNumber, pageSize));
+            ViewBag.currentPageSize = pageSize;
+            IEnumerable<State>? states;
+            if (FilterCountryId is null || viewAll)
+            {
+                states = _service!
+                    .GetAll(orderBy: o => o.OrderBy(s => s.StateName),
+                    propertiesNames: "Country");
+
+            }
+            else
+            {
+               states = _service!
+                    .GetAll(orderBy: o => o.OrderBy(s => s.StateName),
+                            filter:s=>s.CountryId==FilterCountryId,
+                    propertiesNames: "Country");
+                ViewBag.currentFilterCountryId=FilterCountryId;
+            }
+            var statesVm = _mapper!
+                .Map<List<StateListVm>>(states);
+            var stateFilterVm = new StateFilterVm
+            {
+                States = statesVm.ToPagedList(pageNumber, pageSize),
+                Countries = _countriesService!
+                    .GetAll(orderBy: o => o.OrderBy(c => c.CountryName))
+                    .Select(c => new SelectListItem
+                    {
+                        Text = c.CountryName,
+                        Value = c.CountryId.ToString()
+                    })
+                    .ToList()
+
+
+            };
+            return View(stateFilterVm);
         }
+
         public IActionResult UpSert(int? id)
         {
             StateEditVm stateVm;

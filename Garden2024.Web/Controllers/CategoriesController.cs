@@ -18,12 +18,35 @@ namespace Garden2024.Web.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index(int? page)
+        public IActionResult Index(int? page, string? searchTerm=null, bool viewAll=false, int pageSize=10)
         {
             int pageNumber = page ?? 1;
-            int pageSize = 10;
-            var categories = _categoriesService?
-                .GetAll(orderBy:o=>o.OrderBy(c=>c.CategoryName));
+            ViewBag.currentPageSize=pageSize;
+            IEnumerable<Category>? categories;
+            if (!viewAll)
+            {
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    categories = _categoriesService?
+                        .GetAll(orderBy: o => o.OrderBy(c => c.CategoryName),
+                            filter: c => c.CategoryName.Contains(searchTerm)
+                            || c.Description!.Contains(searchTerm));
+                    ViewBag.currentSearchTerm = searchTerm;
+                }
+                else
+                {
+                    categories = _categoriesService?
+                        .GetAll(orderBy: o => o.OrderBy(c => c.CategoryName));
+
+                }
+
+            }
+            else
+            {
+                categories = _categoriesService?
+                    .GetAll(orderBy: o => o.OrderBy(c => c.CategoryName));
+
+            }
             var categoriesVm = _mapper?.Map<List<CategoryListVm>>(categories)
                 .ToPagedList(pageNumber, pageSize);
                 

@@ -20,6 +20,7 @@ namespace Gardens2024.Ioc
             servicios.AddScoped<IStatesRepository, StatesRepository>();
             servicios.AddScoped<ICitiesRepository, CitiesRepository>();
             servicios.AddScoped<ISuppliersRepository, SuppliersRepository>();
+            servicios.AddScoped<IProductsRepository, ProductsRepository>();
 
 
             servicios.AddScoped<ICountriesService,CountriesService>();
@@ -29,6 +30,7 @@ namespace Gardens2024.Ioc
             servicios.AddScoped<ICitiesService, CitiesService>();
 
             servicios.AddScoped<ISuppliersService, SuppliersService>();
+            servicios.AddScoped<IProductsService, ProductsService>();
 
             servicios.AddScoped<IUnitOfWork, UnitOfWork>();
             servicios.AddDbContext<Gardens2024DbContext>(options =>

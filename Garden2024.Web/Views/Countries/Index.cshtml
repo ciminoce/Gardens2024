@@ -40,7 +40,7 @@
                                 <i class="bi bi-pencil-square"></i>&nbsp;
                                 Edit
                             </a>
-                            <a onclick="Delete('/Countries/Delete/@item.CountryId',@item.CountryId)" class="btn btn-danger">
+                            <a onclick="Delete('/Countries/Delete/@item.CountryId',@item.CountryId,'@item.CountryName')" class="btn btn-danger">
                                 <i class="bi bi-trash-fill"></i>
                                 Delete
                             </a>
@@ -60,56 +60,12 @@
             }
         </tbody>
     </table>
-    <div class="d-flex">
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
-   {
-       UlElementClasses = new[] { "pagination" },
-       LiElementClasses = new[] { "page-item" },
-       PageClasses = new[] { "page-link" },
-       DisplayLinkToIndividualPages = true,
-       DisplayPageCountAndCurrentLocation = false,
-       MaximumPageNumbersToDisplay = 10
-   })
-    </div>
+    <partial name="_Pager" model="@Model" />
 
 
 </div>
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    <script type="text/javascript">
-
-        function Delete(url, id) {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: url,
-                        type: 'DELETE',
-                        headers: {
-                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                        },
-
-                        success: function (data) {
-                            if (data.success) {
-                                var row = document.getElementById(id);
-                                row.remove();
-                                toastr.success(data.message)
-                            }
-                            else {
-                                toastr.error(data.message)
-                            }
-                        }
-                    })
-                }
-            });
-        }
-    </script>
+    <script src="~/js/common.js"></script>
 }
