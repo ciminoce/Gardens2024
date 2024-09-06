@@ -54,7 +54,7 @@
                     @{
                         foreach (var item in Model.Countries!)
                         {
-                            if (ViewBag.currentFilterCountryId == int.Parse(item.Value))
+                            if (ViewBag.currentFilterId == int.Parse(item.Value))
                             {
                                 <option selected value="@item.Value">@item.Text</option>
                             }

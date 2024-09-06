@@ -18,7 +18,41 @@
             </a>
         </div>
     </div>
-    <table class="table table-bordered table-hover">
+    <form method="get" class="form-inline" asp-action="Index">
+        <div class="d-flex flex-row align-items-center">
+            <div class="col-auto mx-1">
+                <label for="pageSize">Show:</label>
+            </div>
+            <div class="col-auto mx-2">
+@*                 <select class="form-select" id="pageSize" name="pageSize" onchange="this.form.submit()">
+                    @{
+                        var options = new List<int> { 5, 10, 15, 20 };
+                        foreach(var option in options)
+                        {
+                            <option selected="@(ViewBag.currentPageSize==option?"selected":null)" value="@option">@option</option>
+                        }
+                    }
+                </select>
+                
+ *@            
+                <partial name="_SelectPaginas" model="@ViewBag.currentPageSize" />
+            </div>
+            <div class="col-auto mx-2" style="width: 200px;">
+                <input type="text" id="searchTerm" name="searchTerm" placeholder="Search by Country & State" class="form-control" value="@ViewBag.currentSearchTerm" />
+
+            </div>
+            <div class="col-auto d-flex">
+                <button type="submit" class="btn btn-primary mx-2">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                <button type="submit" class="btn btn-secondary" id="viewAll" name="viewAll" value="true">
+                    <i class="bi bi-list"></i> View All
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-hover mt-3">
         <thead>
             <tr>
                 <th style="width:25%">City</th>

@@ -14,7 +14,6 @@ namespace Garden2024.Web.Controllers
         private readonly ICountriesService? _countriesService;
         private readonly IStatesService? _statesService;
         private readonly IMapper? _mapper;
-        private int pageSize = 10;
 
         public CitiesController(ICitiesService? services,
             ICountriesService countriesService,
@@ -27,12 +26,27 @@ namespace Garden2024.Web.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index(int? page = null)
+        public IActionResult Index(int? page, string? searchTerm, bool viewAll=false, int pageSize=10)
         {
             int pageNumber = page ?? 1;
-            var cities = _service?
-                .GetAll(orderBy: q => q.OrderBy(c => c.CityName),
-                propertiesNames: "Country,State");
+            IEnumerable<City>? cities;
+            ViewBag.currentPageSize = pageSize;
+            if (string.IsNullOrEmpty(searchTerm) || viewAll)
+            {
+                cities = _service?
+                    .GetAll(orderBy: q => q.OrderBy(c => c.CityName),
+                    propertiesNames: "Country,State");
+
+            }
+            else
+            {
+                cities = _service?
+                    .GetAll(orderBy: q => q.OrderBy(c => c.CityName),
+                        filter:c=>c.Country.CountryName.Contains(searchTerm)
+                        || c.State.StateName.Contains(searchTerm),
+                    propertiesNames: "Country,State");
+                ViewBag.currentSearchTerm = searchTerm;
+            }
 
             var citiesVm = _mapper?.Map<List<CityListVm>>(cities);
 

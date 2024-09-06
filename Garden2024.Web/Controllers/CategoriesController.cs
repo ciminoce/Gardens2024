@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Garden2024.Web.ViewModels.Categories;
+using Garden2024.Web.ViewModels.Products;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +11,15 @@ namespace Garden2024.Web.Controllers
     public class CategoriesController : Controller
     {
         private readonly ICategoriesService? _categoriesService;
+        private readonly IProductsService? _productsService;
         private readonly IMapper? _mapper;
         public CategoriesController(ICategoriesService? categoriesService,
+            IProductsService? productsService,
             IMapper mapper)
         {
-            _categoriesService = categoriesService;
-            _mapper = mapper;
+            _categoriesService = categoriesService??throw new ApplicationException("Dependencies not set");
+            _productsService = productsService ?? throw new ApplicationException("Dependencies not set"); ;
+            _mapper = mapper ?? throw new ApplicationException("Dependencies not set"); ;
         }
 
         public IActionResult Index(int? page, string? searchTerm=null, bool viewAll=false, int pageSize=10)
@@ -37,7 +41,6 @@ namespace Garden2024.Web.Controllers
                 {
                     categories = _categoriesService?
                         .GetAll(orderBy: o => o.OrderBy(c => c.CategoryName));
-
                 }
 
             }
@@ -49,9 +52,17 @@ namespace Garden2024.Web.Controllers
             }
             var categoriesVm = _mapper?.Map<List<CategoryListVm>>(categories)
                 .ToPagedList(pageNumber, pageSize);
-                
-                
+
+            foreach (var category in categoriesVm!)
+            {
+                category.ProductsQuantity = GetProductQuantity(category.CategoryId);
+            }    
             return View(categoriesVm);
+        }
+        private int GetProductQuantity(int categoryId)
+        {
+            return _productsService!.GetAll(
+                    filter: p => p.CategoryId == categoryId)!.Count();
         }
         public IActionResult UpSert(int? id)
         {
@@ -159,5 +170,28 @@ namespace Garden2024.Web.Controllers
             }
         }
 
+        public IActionResult Details(int? id,int? page)
+        {
+
+            if (id is null || id == 0)
+            {
+                return NotFound();
+            }
+            Category? category = _categoriesService?.Get(filter: c => c.CategoryId == id);
+            if (category is null)
+            {
+                return NotFound();
+            }
+            var currentPage=page?? 1;
+            int pageSize = 10;
+            CategoryDetailsVm categoryVm = _mapper!.Map<CategoryDetailsVm>(category);
+            categoryVm.ProductsQuantity = GetProductQuantity(categoryVm.CategoryId);
+            var products = _productsService!.GetAll(
+                orderBy: o => o.OrderBy(p => p.ProductName),
+                filter: p => p.CategoryId == categoryVm.CategoryId,
+                propertiesNames: "Category");
+            categoryVm.Products = _mapper!.Map<List<ProductListVm>>(products).ToPagedList(currentPage, pageSize);
+            return View(categoryVm);
+        }
     }
 }

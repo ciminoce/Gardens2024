@@ -1,0 +1,12 @@
+﻿@{
+    int optionSelected = ViewBag.currentPageSize;
+}
+<select class="form-select" id="pageSize" name="pageSize" onchange="this.form.submit()">
+    @{
+        var options = new List<int> { 5, 10, 15, 20 };
+        foreach (var option in options)
+        {
+            <option selected="@(optionSelected==option?"selected":null)" value="@option">@option</option>
+        }
+    }
+</select>

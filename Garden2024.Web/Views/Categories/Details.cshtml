@@ -1,0 +1,116 @@
+﻿@model CategoryDetailsVm
+@using X.PagedList
+@using X.Web.PagedList
+
+<div>
+    <h4>Category's Details</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            <label asp-for="CategoryName"></label>
+        </dt>
+        <dd class="col-sm-4">
+            <input asp-for="CategoryName" class="form-control form-control-sm" readonly />
+        </dd>
+        <dt class="col-sm-2">
+            <label asp-for="Description"></label>
+        </dt>
+        <dd class="col-sm-4">
+            <input asp-for="Description" class="form-control form-control-sm" readonly />
+        </dd>
+        <dt class="col-sm-2">
+            <label asp-for="ProductsQuantity"></label>
+        </dt>
+        <dd class="col-sm-4">
+            <input asp-for="ProductsQuantity" class="form-control form-control-sm" readonly />
+        </dd>
+    </dl>
+</div>
+<div>
+    <a class="btn btn-warning btn-sm" asp-controller="Categories" asp-action="UpSert" asp-route-id="@Model.CategoryId">
+        <i class="bi bi-pencil-square"></i>&nbsp;
+        Edit
+    </a>
+    <a asp-action="Index" class="btn btn-success btn-sm">
+        <i class="bi bi-backspace"></i>&nbsp;
+        Back to List
+    </a>
+</div>
+<table class="table table-bordered table-hover mt-3">
+    <thead>
+        <tr>
+            <th style="width:20%">Product</th>
+            <th style="width:20%">Category</th>
+            <th style="width:14%">Q.Unit</th>
+            <th style="width:8%">Price</th>
+            <th style="width:8%">Stock</th>
+            <th style="width:10%">Suspended</th>
+
+            <th style="width:20%">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Products!.Any())
+        {
+            foreach (var item in Model.Products!)
+            {
+                <tr id="@item.ProductId">
+                    <td>
+                        @item.ProductName
+
+                    </td>
+                    <td>
+                        @item.Category
+                    </td>
+                    <td>
+                        @item.QuantityPerUnit
+                    </td>
+                    <td style="text-align:right">
+                        @item.UnitPrice.ToString("C2")
+                    </td>
+                    <td style="text-align:right">
+                        @item.Stock
+                    </td>
+                    <td>
+                        <input type="checkbox" asp-for="@item.Suspended" disabled />
+
+                    </td>
+
+                    <td>
+                        <a class="btn btn-warning" asp-controller="Products" asp-action="UpSert" asp-route-id="@item.ProductId">
+                            <i class="bi bi-pencil-square"></i>&nbsp;
+                            Edit
+                        </a>
+                        <a onclick="Delete('/Products/Delete/@item.ProductId',@item.ProductId,'@item.ProductName')" class="btn btn-danger">
+                            <i class="bi bi-trash-fill"></i>
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center">
+                    F?uck!!! No products have been added yet!
+
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+<div class="d-flex">
+    @Html.PagedListPager(Model.Products, page => Url.Action("Details",
+    new { page ,
+    }), new PagedListRenderOptions
+{
+    UlElementClasses = new[] { "pagination" },
+    LiElementClasses = new[] { "page-item" },
+    PageClasses = new[] { "page-link" },
+    DisplayLinkToIndividualPages = true,
+    DisplayPageCountAndCurrentLocation = false,
+    MaximumPageNumbersToDisplay = 10
+})
+</div>

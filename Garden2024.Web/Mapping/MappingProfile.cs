@@ -64,6 +64,7 @@ namespace Garden2024.Web.Mapping
         private void LoadCategoriesMapping()
         {
             CreateMap<Category, CategoryListVm>();
+            CreateMap<Category, CategoryDetailsVm>();
             CreateMap<Category, CategoryEditVm>().ReverseMap();
         }
     }

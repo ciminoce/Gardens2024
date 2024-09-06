@@ -24,12 +24,12 @@ namespace Garden2024.Web.Controllers
             _mapper = mapper ?? throw new ArgumentException("Dependencies not set"); ;
         }
 
-        public IActionResult Index(int? page, int? FilterCountryId, int pageSize=10, bool viewAll=false)
+        public IActionResult Index(int? page, int? filterId, int pageSize=10, bool viewAll=false)
         {
             var pageNumber = page ?? 1;
             ViewBag.currentPageSize = pageSize;
             IEnumerable<State>? states;
-            if (FilterCountryId is null || viewAll)
+            if (filterId is null || viewAll)
             {
                 states = _service!
                     .GetAll(orderBy: o => o.OrderBy(s => s.StateName),
@@ -40,9 +40,9 @@ namespace Garden2024.Web.Controllers
             {
                states = _service!
                     .GetAll(orderBy: o => o.OrderBy(s => s.StateName),
-                            filter:s=>s.CountryId==FilterCountryId,
+                            filter:s=>s.CountryId==filterId,
                     propertiesNames: "Country");
-                ViewBag.currentFilterCountryId=FilterCountryId;
+                ViewBag.currentFilterCountryId=filterId;
             }
             var statesVm = _mapper!
                 .Map<List<StateListVm>>(states);
