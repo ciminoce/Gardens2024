@@ -24,24 +24,7 @@
                 <label for="pageSize">Show:</label>
             </div>
             <div class="col-auto mx-2">
-                <select class="form-select" id="pageSize" name="pageSize" onchange="this.form.submit()" style="width:70px">
-                    @{
-                        var options = new List<int> { 5, 10, 15, 20 };
-                        foreach (var option in options)
-                        {
-                            if(ViewBag.currentPageSize==option)
-                            {
-                                <option selected value="@option">@option</option>
-
-                            }
-                            else
-                            {
-                                <option value="@option">@option</option>
-
-                            }
-                        }
-                    }
-                </select>
+                <partial name="_SelectPaginas" model="@ViewBag.currentPageSize" />
             </div>
             <div class="col-auto mx-2" style="width: 200px;">
                 <input type="text" name="searchTerm" id="searchTerm" class="form-control" placeholder="Search by..." value="@ViewBag.currentSearchTerm" />
