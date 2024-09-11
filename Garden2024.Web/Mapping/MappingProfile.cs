@@ -26,6 +26,7 @@ namespace Garden2024.Web.Mapping
             CreateMap<Product, ProductListVm>()
                 .ForMember(dest => dest.Category,
                 opt => opt.MapFrom(src => src.Category.CategoryName));
+            CreateMap<Product, ProductEditVm>().ReverseMap();
         }
 
         private void LoadSuppliersMapping()
