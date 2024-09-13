@@ -83,12 +83,15 @@ namespace Garden2024.Web.Controllers
             {
                 try
                 {
+                    string? wwwWebRoot = _webHostEnvironment!.WebRootPath;
                     Product? product = _productsService!.Get(filter: c => c.ProductId == id,
                         propertiesNames: "Category,Supplier");
                     if (product == null)
                     {
                         return NotFound();
                     }
+                    var filePath = Path.Combine(wwwWebRoot, product.ImageUrl!.TrimStart('/'));
+                    ViewData["ImageExist"] = System.IO.File.Exists(filePath);
                     productVm = _mapper!.Map<ProductEditVm>(product);
                     productVm.Categories = GetCategories();
                     productVm.Suppliers = GetSuppliers();
@@ -135,6 +138,7 @@ namespace Garden2024.Web.Controllers
 
             try
             {
+                string? wwwWebRoot = _webHostEnvironment!.WebRootPath;
                 Product product = _mapper.Map<Product>(productVm);
 
                 if (_productsService!.Exist(product))
@@ -147,16 +151,35 @@ namespace Garden2024.Web.Controllers
                 }
                 if (productVm.ImageFile != null)
                 {
-                    string? wwwWebRoot = _webHostEnvironment!.WebRootPath;
+                    var permittedExtensions = new string[] { ".png", ".jpg", ".jpeg", ".gif" };
+                    var fileExtension=Path.GetExtension(productVm.ImageFile.FileName);
+                    if (!permittedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError(string.Empty, "File not allowed");
+                        productVm.Categories = GetCategories();
+                        productVm.Suppliers = GetSuppliers();
 
-                    string fileName=$"{Guid.NewGuid()}{Path.GetExtension(productVm.ImageFile.FileName)}";
-                    string pathName=Path.Combine(wwwWebRoot,"images", fileName);
+                        return View(productVm);
+
+                    }
+                    if (product.ImageUrl!=null)
+                    {
+                        string oldFilePath = Path.Combine(wwwWebRoot, product.ImageUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(oldFilePath))
+                        {
+                            System.IO.File.Delete(oldFilePath);
+                        }
+                    }
+                    string fileName = $"{Guid.NewGuid()}{Path.GetExtension(productVm.ImageFile.FileName)}";
+                    string pathName = Path.Combine(wwwWebRoot, "images", fileName);
 
                     using (var fileStream = new FileStream(pathName, FileMode.Create))
                     {
                         productVm.ImageFile.CopyTo(fileStream);
                     }
-                    product.ImageUrl=$"/images/{fileName}";
+                    product.ImageUrl = $"/images/{fileName}";
+
+                                    
                 }
                 _productsService.Save(product);
                 TempData["success"] = "Record successfully added/edited";
@@ -199,6 +222,14 @@ namespace Garden2024.Web.Controllers
                     return Json(new { success = false, message = "Related Record... Delete Deny!!" }); ;
                 }
                 _productsService.Delete(product);
+                string? wwwWebRoot = _webHostEnvironment!.WebRootPath;
+
+                string oldFilePath = Path.Combine(wwwWebRoot, product.ImageUrl!.TrimStart('/'));
+                if (System.IO.File.Exists(oldFilePath))
+                {
+                    System.IO.File.Delete(oldFilePath);
+                }
+
                 return Json(new { success = true, message = "Record successfully deleted" });
             }
             catch (Exception)
