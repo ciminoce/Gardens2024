@@ -88,7 +88,15 @@
                             @item.Stock
                         </td>
                         <td>
-                            <input type="checkbox" asp-for="@item.Suspended" disabled />
+                            @if (item.Suspended)
+                            {
+                                <span class="badge bg-danger">YES</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">NO </span>
+                            }
+                            
                            
                         </td>
 
