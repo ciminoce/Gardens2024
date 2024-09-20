@@ -8,6 +8,7 @@ using X.PagedList.Extensions;
 
 namespace Garden2024.Web.Controllers
 {
+    [Area("Admin")]
     public class CategoriesController : Controller
     {
         private readonly ICategoriesService? _categoriesService;

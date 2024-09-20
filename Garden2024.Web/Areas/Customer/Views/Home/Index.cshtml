@@ -1,0 +1,70 @@
+﻿@model IPagedList<ProductHomeIndexVm>
+@using X.PagedList
+@using X.Web.PagedList
+
+@{
+    ViewData["Title"] = "Home Page";
+    string ShrinkProductName(string productName)
+    {
+        return productName.Length >= 20 ? $"{productName.Substring(0, 15)}..." : productName;
+    }
+}
+<div class="row">
+    @foreach (var product in Model)
+    {
+        <div class="col-lg-3 col-sm-6">
+            <div class="row p-2">
+                <div class="col-12 p1">
+                    <div class="card border-0 p-3 shadow border-top border-5 rounded">
+                        <img src="@(string.IsNullOrEmpty(product.ImageUrl)?"/images/SinImagenDisponible.jpg":product.ImageUrl)" class="card-img-top d-block mx-auto" alt="..." style="width: 200px; height: 200px; object-fit: cover;">
+                        <div class="card-body pb-0">
+                            <div class="pl-1">
+                                <p class="card-text text-center h5 text-dark opacity-75">@ShrinkProductName(product.ProductName)</p>
+                                <p class="card-text text-center text-info">@product.Category</p>
+
+                            </div>
+                            @if (product.Suspended)
+                            {
+                                <p class="text-center">
+                                    <span class="badge bg-danger">Suspended</span>
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="text-center">
+                                    <span class="badge bg-primary">Available</span>
+                                </p>
+
+                            }
+                            <div class="pl-1">
+                                <p class="text-dark text-center opacity-75 mb-0">
+                                    List Price:
+                                    $<span class="text-decoration-line-through">@product.ListPrice</span>
+                                </p>
+
+                            </div>
+                            <div class="pl-1">
+                                <p class="text-dark text-center opacity-75">
+                                    As Low As:
+                                    $<span>@product.CashPrice.ToString("N2")</span>
+                                </p>
+
+                            </div>
+
+                        </div>
+                        <div>
+                            <a class="btn btn-secondary bg-gradient form-control"
+                               asp-action="Details"
+                               asp-route-id="@product.ProductId">
+                                Details
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    }
+    <partial name="_Pager" model="@Model" />
+</div>

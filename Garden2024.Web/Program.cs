@@ -1,5 +1,4 @@
 using Gardens2024.Ioc;
-using Microsoft.Extensions.Configuration;
 namespace Garden2024.Web
 {
     public class Program
@@ -33,7 +32,7 @@ namespace Garden2024.Web
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{area=Customer}/{controller=Home}/{action=Hero}/{id?}");
 
             app.Run();
         }

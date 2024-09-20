@@ -27,6 +27,18 @@ namespace Garden2024.Web.Mapping
                 .ForMember(dest => dest.Category,
                 opt => opt.MapFrom(src => src.Category.CategoryName));
             CreateMap<Product, ProductEditVm>().ReverseMap();
+            CreateMap<Product, ProductHomeIndexVm>()
+                .ForMember(dest => dest.Category,
+                opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ForMember(dest => dest.ListPrice, opt => opt.MapFrom(src => src.UnitPrice))
+                .ForMember(dest => dest.CashPrice, opt => opt.MapFrom(src => src.UnitPrice * 0.9m));
+            CreateMap<Product, ProductHomeDetailsVm>()
+                .ForMember(dest => dest.Category,
+                opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ForMember(dest => dest.ListPrice, opt => opt.MapFrom(src => src.UnitPrice))
+                .ForMember(dest => dest.CashPrice, opt => opt.MapFrom(src => src.UnitPrice * 0.9m))
+                .ForMember(dest => dest.Supplier, opt => opt.MapFrom(src => src.Supplier.SupplierName));
+
         }
 
         private void LoadSuppliersMapping()
