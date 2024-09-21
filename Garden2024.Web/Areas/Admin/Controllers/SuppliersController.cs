@@ -225,6 +225,35 @@ namespace Garden2024.Web.Controllers
                 .GetAll(filter: s => s.StateId == stateId);
             return Json(citiesList);
         }
+        public IActionResult Details(int? id)
+        {
+            if (id is null || id == 0)
+            {
+                return NotFound();
+            }
+            try
+            {
+                if (_services == null || _mapper == null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Dependencias no están configuradas correctamente");
+                }
+                Supplier? supplier = _services?.Get(filter: c => c.SupplierId == id.Value,
+                            propertiesNames: "Country,State,City");
+                if (supplier is null)
+                {
+                    return NotFound();
+                }
+                SupplierDetailsVm supplierVm = _mapper.Map<SupplierDetailsVm>(supplier);
+                return View(supplierVm);
+            }
+            catch (Exception)
+            {
+
+                return Json(new { success = false, message = "Couldn't delete record!!! " }); ;
+
+            }
+
+        }
 
     }
 }

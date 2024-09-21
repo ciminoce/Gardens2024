@@ -21,12 +21,11 @@
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th style="width:20%">Supplier</th>
-                <th style="width:10%">Phone</th>
+                <th style="width:25%">Supplier</th>
                 <th style="width:15%">City</th>
                 <th style="width:15%">State</th>
                 <th style="width:15%">Country</th>
-                <th style="width:25%">Actions</th>
+                <th style="width:30%">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -38,9 +37,6 @@
                         <td>
                             @item.SupplierName
 
-                        </td>
-                        <td>
-                            @item.Phone
                         </td>
                         <td>
                             @item.City
@@ -61,6 +57,12 @@
                                 <i class="bi bi-trash-fill"></i>
                                 Delete
                             </a>
+                            <a class="btn btn-info" asp-controller="Suppliers" asp-action="Details" asp-route-id="@item.SupplierId">
+                                <i class="bi bi-card-list"></i>
+                                Details
+
+                            </a>
+
                         </td>
                     </tr>
                 }
