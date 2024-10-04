@@ -2,6 +2,7 @@
 using Garden2024.Web.ViewModels.States;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -10,6 +11,7 @@ using X.PagedList.Extensions;
 namespace Garden2024.Web.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
 
     public class StatesController : Controller
     {

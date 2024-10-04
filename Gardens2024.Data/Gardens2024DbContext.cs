@@ -1,9 +1,11 @@
 ﻿using Gardens2024.Entities.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gardens2024.Data
 {
-    public class Gardens2024DbContext:DbContext
+    public class Gardens2024DbContext:IdentityDbContext<IdentityUser>
     {
         public Gardens2024DbContext(DbContextOptions<Gardens2024DbContext> options):base(options)
         {
@@ -15,5 +17,6 @@ namespace Gardens2024.Data
         public DbSet<State> States { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

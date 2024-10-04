@@ -61,6 +61,6 @@ namespace Garden2024.Web.ViewModels.Products
         [ValidateNever]
         public List<SelectListItem>? Suppliers { get; set; }
 
-
+        public string? ReturnUrl { get; set; }
     }
 }

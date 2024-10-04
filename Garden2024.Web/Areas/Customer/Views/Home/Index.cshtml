@@ -55,7 +55,8 @@
                         <div>
                             <a class="btn btn-secondary bg-gradient form-control"
                                asp-action="Details"
-                               asp-route-id="@product.ProductId">
+                               asp-route-id="@product.ProductId"
+                                asp-route-returnUrl="@Url.Action("Index",new{page=Model.PageNumber})">
                                 Details
                             </a>
                         </div>

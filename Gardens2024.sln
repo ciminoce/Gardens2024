@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gardens2024.Services", "Gar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gardens2024.Ioc", "Gardens2024.Ioc\Gardens2024.Ioc.csproj", "{C9A131CA-EDC4-4217-98AA-16A6B923D7D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Garden2024.Web", "Garden2024.Web\Garden2024.Web.csproj", "{DFE3AEBA-7412-4F3C-BAF8-C20ADC97C602}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garden2024.Web", "Garden2024.Web\Garden2024.Web.csproj", "{DFE3AEBA-7412-4F3C-BAF8-C20ADC97C602}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gardens2024.Utilities", "Gardens2024.Utilities\Gardens2024.Utilities.csproj", "{B6736E34-FD9A-4B72-8189-17867E64DDCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{DFE3AEBA-7412-4F3C-BAF8-C20ADC97C602}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFE3AEBA-7412-4F3C-BAF8-C20ADC97C602}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFE3AEBA-7412-4F3C-BAF8-C20ADC97C602}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6736E34-FD9A-4B72-8189-17867E64DDCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6736E34-FD9A-4B72-8189-17867E64DDCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6736E34-FD9A-4B72-8189-17867E64DDCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6736E34-FD9A-4B72-8189-17867E64DDCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

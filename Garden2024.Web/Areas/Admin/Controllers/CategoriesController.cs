@@ -3,12 +3,14 @@ using Garden2024.Web.ViewModels.Categories;
 using Garden2024.Web.ViewModels.Products;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using X.PagedList.Extensions;
 
 namespace Garden2024.Web.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles ="Admin")]
     public class CategoriesController : Controller
     {
         private readonly ICategoriesService? _categoriesService;

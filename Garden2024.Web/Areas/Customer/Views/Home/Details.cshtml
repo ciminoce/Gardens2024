@@ -12,7 +12,7 @@
         <div class="py-3">
             <div class="row">
                 <div class="col-6 col-md-2 offset-lg-1 pb-1">
-                    <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary bg-gradient mb-5 fw-semibold btn-sm text-uppercase">
+                    <a href="@(ViewBag.ReturnUrl??Url.Action("Index","Home",new{area="Customer"}))" class="btn btn-outline-primary bg-gradient mb-5 fw-semibold btn-sm text-uppercase">
                         <small>Back to List</small>
                     </a>
                 </div>
@@ -26,8 +26,24 @@
                 </div>
 
                 <div class="col-12 col-lg-6 offset-lg-1">
-                    <div class="mb-3">
-                        <span class="badge bg-secondary text-white fw-bold text-uppercase">@Model.Category</span>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <span class="badge bg-secondary text-white fw-bold text-uppercase fs-5">@Model.Category</span>
+                        </div>
+                        @if (Model.Suspended)
+                        {
+                            <div class="col-6 mb-3">
+                                <span class="badge bg-danger text-white fw-bold fs-5 ">Suspended</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-6 mb-3">
+                                <span class="badge bg-primary text-white fw-bold fs-5">Available</span>
+                            </div>
+
+                        }
+
                     </div>
 
                     <div class="row">
@@ -65,25 +81,51 @@
                         </div>
                     </div>
 
-
-                    <!-- Count Input -->
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text bg-primary text-white border-0 fw-semibold">Count</span>
-                                <input type="number" value="1" class="form-control text-end" min="1" aria-label="Quantity" />
+                    @if (!Model.Suspended)
+                    {
+                        if (Model.Stock > 0)
+                        {
+                            <!-- Count Input -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <span class="border-0 fw-semibold">Stock</span>
+                                        <input class="form-control text-end" asp-for="@Model.Stock" />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Add to Cart Button -->
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <button type="submit" disabled class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
-                                Add to Cart (Coming Soon...)
-                            </button>
-                        </div>
-                    </div>
+
+                            <!-- Count Input -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white border-0 fw-semibold">Count</span>
+                                        <input type="number" value="1" class="form-control text-end" min="1" aria-label="Quantity" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Add to Cart Button -->
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <button type="submit" disabled class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
+                                        Add to Cart (Coming Soon...)
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        }
+                        else
+                        {
+                            <div class="col-md-4 mb-3">
+                                <span class="badge bg-danger text-white fw-bold fs-5 ">Out Of Stock</span>
+                            </div>
+
+                        }
+                    }
+
                 </div>
             </div>
         </div>

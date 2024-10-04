@@ -2,6 +2,7 @@
 using Garden2024.Web.ViewModels.Products;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList.Extensions;
@@ -9,6 +10,7 @@ using X.PagedList.Extensions;
 namespace Garden2024.Web.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
 
     public class ProductsController : Controller
     {
@@ -72,7 +74,7 @@ namespace Garden2024.Web.Controllers
                 }).ToList();
         }
 
-        public IActionResult UpSert(int? id)
+        public IActionResult UpSert(int? id,string? returnUrl=null)
         {
             ProductEditVm productVm;
             if (id == null || id == 0)
@@ -92,11 +94,20 @@ namespace Garden2024.Web.Controllers
                     {
                         return NotFound();
                     }
-                    var filePath = Path.Combine(wwwWebRoot, product.ImageUrl!.TrimStart('/'));
-                    ViewData["ImageExist"] = System.IO.File.Exists(filePath);
+                    if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        var filePath = Path.Combine(wwwWebRoot, product.ImageUrl!.TrimStart('/'));
+                        ViewData["ImageExist"] = System.IO.File.Exists(filePath);
+
+                    }
+                    else
+                    {
+                        ViewData["ImageExist"] = false;
+                    }
                     productVm = _mapper!.Map<ProductEditVm>(product);
                     productVm.Categories = GetCategories();
                     productVm.Suppliers = GetSuppliers();
+                    productVm.ReturnUrl = returnUrl;
                     return View(productVm);
                 }
                 catch (Exception)
@@ -125,6 +136,7 @@ namespace Garden2024.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpSert(ProductEditVm productVm)
         {
+            string? returnUrl=productVm.ReturnUrl;
             if (!ModelState.IsValid)
             {
                 productVm.Categories = GetCategories();
@@ -185,7 +197,15 @@ namespace Garden2024.Web.Controllers
                 }
                 _productsService.Save(product);
                 TempData["success"] = "Record successfully added/edited";
-                return RedirectToAction("Index");
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+
+                }
             }
             catch (Exception)
             {

@@ -37,7 +37,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             var productsVm = _mapper!.Map<List<ProductHomeIndexVm>>(products);
             return View(productsVm.ToPagedList(currentPage,pageSize));
         }
-        public IActionResult Details(int? id)
+        public IActionResult Details(int? id, string? returnUrl=null)
         {
             if (id == null || id.Value == 0) { return NotFound(); }
             Product? product = _productsService!.Get(
@@ -48,6 +48,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
                 return NotFound();
             }
             ProductHomeDetailsVm productVm = _mapper!.Map<ProductHomeDetailsVm>(product);
+            ViewBag.ReturnUrl=returnUrl;
             return View(productVm);
         }
         public IActionResult Privacy()

@@ -2,6 +2,7 @@
 using Garden2024.Web.ViewModels.Cities;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList.Extensions;
@@ -9,6 +10,7 @@ using X.PagedList.Extensions;
 namespace Garden2024.Web.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
 
     public class CitiesController : Controller
     {
