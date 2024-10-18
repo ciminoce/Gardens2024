@@ -11,7 +11,8 @@ namespace Garden2024.Web
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<Gardens2024DbContext>();
+                .AddEntityFrameworkStores<Gardens2024DbContext>()
+                .AddDefaultTokenProviders();
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";

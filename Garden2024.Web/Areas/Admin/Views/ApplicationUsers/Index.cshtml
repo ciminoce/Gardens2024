@@ -1,0 +1,108 @@
+﻿@model IPagedList<ApplicationUserListVm>
+@using X.PagedList
+@using X.Web.PagedList
+@{
+    ViewData["Title"] = "Customers List";
+}
+<div class="container">
+    @Html.AntiForgeryToken()
+    <div class="row mb-3">
+        <div class="col-6">
+            <h3>Customer's List</h3>
+
+        </div>
+    </div>
+    <form method="get" class="form-inline" asp-action="Index">
+        <div class="d-flex flex-row align-items-center">
+            <div class="col-auto mx-1">
+                <label for="pageSize">Show:</label>
+            </div>
+            <div class="col-auto mx-2">
+                <partial name="_SelectPaginas" model="@ViewBag.currentPageSize" />
+            </div>
+            <div class="col-auto mx-2" style="width: 200px;">
+                <input type="text" name="searchTerm" id="searchTerm" class="form-control" placeholder="Search by..." value="@ViewBag.currentSearchTerm" />
+            </div>
+            <div class="col-auto d-flex">
+                <button type="submit" class="btn btn-primary mx-2">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                <button type="submit" class="btn btn-secondary" id="viewAll" name="viewAll" value="true">
+                    <i class="bi bi-list"></i> View All
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-hover mt-3">
+        <thead>
+            <tr>
+                <th style="width:15%">First Name</th>
+                <th style="width:15%">Last Name</th>
+                <th style="width:10%">Phone</th>
+                <th style="width:15%">City</th>
+                <th style="width:15%">State</th>
+                <th style="width:15%">Country</th>
+                <th style="width:20%">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr id="@item.Id">
+                        <td>
+                            @item.FirstName
+
+                        </td>
+                        <td>
+                            @item.LastName
+
+                        </td>
+                        <td>
+                            @item.Phone
+
+                        </td>
+
+                        <td>
+                            @item.City
+                        </td>
+                        <td>
+                            @item.State
+                        </td>
+                        <td>
+                            @item.Country
+                        </td>
+
+                        <td>
+                            <a class="btn btn-info" asp-controller="ApplicationUsers" asp-action="Details" asp-route-id="@item.Id">
+                                <i class="bi bi-card-list"></i>
+                                Details
+
+                            </a>
+
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">
+                        F?ck!!! No customers have been added yet!
+
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    <partial name="_Pager" model="@Model" />
+
+</div>
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="~/js/common.js"></script>
+}

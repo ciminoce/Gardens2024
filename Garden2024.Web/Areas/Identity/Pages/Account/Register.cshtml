@@ -1,67 +1,200 @@
 ﻿@page
 @model RegisterModel
-@{
-    ViewData["Title"] = "Register";
-}
-
-<h1>@ViewData["Title"]</h1>
-
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+<div class="card shadow border-0 mt-3">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-4">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="py-2 text-white">Register</h2>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
+        </div>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
+    <div class="card-body pt-2">
+        <div class="row pt-3">
+            <div class="col-md-12">
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <h3 class="border-bottom pb-3 mb-4 text-secondary text-center">Create a new account.</h3>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="row">
+                        <div class="form-floating mb-3 col-md-6">
+                            <input asp-for="Input.FirstName" class="form-control" aria-required="true" />
+                            <label asp-for="Input.FirstName" class="ms-2 text-muted"></label>
+                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                         </div>
-                    </form>
-                }
-            }
-        </section>
+                        <div class="form-floating mb-3 col-md-6">
+                            <input asp-for="Input.LastName" class="form-control" />
+                            <label asp-for="Input.LastName" class="ms-2 text-muted"></label>
+                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                    <div class=row>
+                        <div class="form-floating mb-3 col-md-6">
+                            <input asp-for="Input.Address" class="form-control" />
+                            <label asp-for="Input.Address" class="ms-2 text-muted"></label>
+                            <span asp-validation-for="Input.Address" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="form-floating mb-3 col-md-6">
+                            @* <label asp-for="Input.CountryId" class="ms-2 text-muted"></label> *@
+                            <select asp-for="Input.CountryId" asp-items="@Model.Input.Countries" class="form-select">
+                                <option selected disabled class="text-muted">Select Country</option>
+                            </select>
+                            <span asp-validation-for="Input.CountryId" class="text-danger"></span>
+
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="form-floating mb-3 col-md-6">
+                            @* <label asp-for="Input.StateId"></label> *@
+                            <select asp-for="Input.StateId" asp-items="@Model.Input.States" class="form-control">
+                                <option selected disabled>Select State</option>
+                            </select>
+                            <span asp-validation-for="Input.StateId" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="form-floating mb-3 col-md-6">
+                            @* <label asp-for="Input.CityId"></label> *@
+                            <select asp-for="Input.CityId" asp-items="@Model.Input.Cities" class="form-control">
+                                <option selected disabled>Select City</option>
+                            </select>
+                            <span asp-validation-for="Input.CityId" class="text-danger"></span>
+
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="form-floating mb-3 col-md-6">
+                            <input asp-for="Input.ZipCode" class="form-control" />
+                            <label asp-for="Input.ZipCode" class="ms-2 text-muted"></label>
+                            <span asp-validation-for="Input.ZipCode" class="text-danger"></span>
+
+                        </div>
+                        <div class="form-floating mb-3 col-md-6">
+                            <input asp-for="Input.Phone" class="form-control" />
+                            <label asp-for="Input.Phone" class="ms-2 text-muted"></label>
+                            <span asp-validation-for="Input.Phone" class="text-danger"></span>
+
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3 col-md-12">
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <label asp-for="Input.Email" class="ms-2 text-muted">Email</label>
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="form-floating mb-3 col-md-6">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.Password" class="ms-2 text-muted">Password</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3 col-md-6">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.ConfirmPassword" class="ms-2 text-muted">Confirm Password</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                    <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+                </form>
+            </div>
+            <div class="col-md-12">
+                <section>
+                    <h3>Use another service to register.</h3>
+                    <hr />
+                    @{
+                        if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                        {
+                            <div>
+                                <p>
+                                    There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
+                                        article
+                                        about setting up this ASP.NET application to support logging in via external services
+                                    </a>.
+                                </p>
+                            </div>
+                        }
+                        else
+                        {
+                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                <div>
+                                    <p>
+                                        @foreach (var provider in Model.ExternalLogins!)
+                                        {
+                                            <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                        }
+                                    </p>
+                                </div>
+                            </form>
+                        }
+                    }
+                </section>
+            </div>
+        </div>
     </div>
 </div>
 
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $("#Input_CountryId").change(function () {
+                $("#Input_StateId").empty();
+                $("#Input_StateId").append('<option value="0">[Select State]</option>');
+                console.log($("#Input_CountryId"));
+                debugger;
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Page("/Account/Register", null, new { handler = "GetStates", area = "Identity" })',
+                    dataType: 'json',
+                    data: {
+                        countryId: $("#Input_CountryId").val()
+                    },
+                    success: function (states) {
+                        console.log("States received: ", states);
+                        $.each(states, function (i, state) {
+                            $("#Input_StateId").append('<option value="' + state.stateId + '">' + state.stateName + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Error trying to load the states: ' + ex.responseText);
+                    }
+                });
+                return false;
+            });
+            $("#Input_StateId").change(function () {
+                $("#Input_CityId").empty();
+                $("#Input_CityId").append('<option value="0">[Select City]</option>');
+
+                console.log($("#Input_StateId"));
+                debugger;
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Page("/Account/Register", null, new { handler = "GetCities", area = "Identity" })',
+                    dataType: 'json',
+                    data: {
+                        stateId: $("#Input_StateId").val()
+                    },
+                    success: function (cities) {
+                        console.log("Cities received: ", cities);
+                        $.each(cities, function (i, city) {
+                            $("#Input_CityId").append('<option value="' + city.cityId + '">' + city.cityName + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Error trying to load the states.' + ex);
+                    }
+                });
+                return false;
+            });
+
+
+        });
+    </script>
 }

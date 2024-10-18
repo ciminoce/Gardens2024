@@ -55,7 +55,19 @@
                                 <a class="nav-link text-dark" asp-area="Admin" asp-controller="Products" asp-action="Index">Products</a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="ApplicationUsers" asp-action="Index">Customers</a>
+                            </li>
 
+
+                        }
+                        @if (User.IsInRole(WC.Role_Customer))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Customer" asp-controller="ShoppingCarts" asp-action="Index">
+                                    <i class="bi bi-cart4"></i>
+                                </a>
+                            </li>
 
                         }
                     </ul>

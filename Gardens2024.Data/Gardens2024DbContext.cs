@@ -18,5 +18,6 @@ namespace Gardens2024.Data
         public DbSet<City> Cities { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     }
 }

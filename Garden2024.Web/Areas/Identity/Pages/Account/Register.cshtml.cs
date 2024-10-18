@@ -2,23 +2,21 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 using Gardens2024.Entities.Entities;
+using Gardens2024.Services.Interfaces;
+using Gardens2024.Utilities;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace Garden2024.Web.Areas.Identity.Pages.Account
 {
@@ -31,6 +29,9 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ICountriesService _countriesService;
+        private readonly IStatesService _statesService;
+        private readonly ICitiesService _citiesService;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -38,7 +39,10 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender, 
+            ICountriesService countriesService,
+            IStatesService statesService,
+            ICitiesService citiesService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -47,6 +51,9 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _countriesService = countriesService;
+            _statesService = statesService;
+            _citiesService = citiesService;
         }
 
         /// <summary>
@@ -101,12 +108,82 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "{0} is required")]
+            [StringLength(100, ErrorMessage = "{0} must have between {2} and {1} characters", MinimumLength = 3)]
+            [DisplayName("First Name")]
+            public string FirstName { get; set; } = null!;
+
+            [Required(ErrorMessage = "{0} is required")]
+            [StringLength(100, ErrorMessage = "{0} must have between {2} and {1} characters", MinimumLength = 3)]
+            [DisplayName("Last Name")]
+            public string LastName { get; set; } = null!;
+
+            [Required(ErrorMessage = "{0} is required")]
+            [StringLength(200, ErrorMessage = "{0} must have between {2} and {1} characters", MinimumLength = 3)]
+            public string Address { get; set; } = null!;
+
+            [MaxLength(20, ErrorMessage = "{0} must have at least {1} characters")]
+            public string? Phone { get; set; }
+
+            [Required(ErrorMessage = "{0} is required")]
+            [StringLength(10, ErrorMessage = "{0} must have between {2} and {1} characters", MinimumLength = 3)]
+            [DisplayName("Zip Code")]
+            public string ZipCode { get; set; } = null!;
+
+            [Required(ErrorMessage = "Country is required")]
+            [Range(1, int.MaxValue, ErrorMessage = "You must select a country")]
+            [DisplayName("Country")]
+            public int CountryId { get; set; }
+
+            [Required(ErrorMessage = "State is required")]
+            [Range(1, int.MaxValue, ErrorMessage = "You must select a state")]
+            [DisplayName("State")]
+            public int StateId { get; set; }
+
+            [Required(ErrorMessage = "City is required")]
+            [Range(1, int.MaxValue, ErrorMessage = "You must select a city")]
+            [DisplayName("City")]
+            public int CityId { get; set; }
+
+
+            [ValidateNever]
+            public IEnumerable<SelectListItem> Countries { get; set; } = null!;
+
+            [ValidateNever]
+            public IEnumerable<SelectListItem> States { get; set; } = null!;
+
+            [ValidateNever]
+            public IEnumerable<SelectListItem> Cities { get; set; } = null!;
+
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+            Input = new InputModel
+            {
+                Countries = _countriesService.GetAll(orderBy:
+                    o => o.OrderBy(c => c.CountryName)).Select(c => new SelectListItem
+                    {
+                        Text = c.CountryName,
+                        Value = c.CountryId.ToString()
+                    }),
+                States = _statesService.GetAll(orderBy:
+                    o => o.OrderBy(c => c.StateName)).Select(c => new SelectListItem
+                    {
+                        Text = c.StateName,
+                        Value = c.StateId.ToString()
+                    }),
+                Cities = _citiesService.GetAll(orderBy:
+                    o => o.OrderBy(c => c.CityName)).Select(c => new SelectListItem
+                    {
+                        Text = c.CityName,
+                        Value = c.CityId.ToString()
+                    }),
+
+            };
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
@@ -118,6 +195,14 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                user.Address = Input.Address;
+                user.ZipCode = Input.ZipCode;
+                user.CountryId = Input.CountryId;
+                user.StateId = Input.StateId;
+                user.CityId = Input.CityId;
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -125,6 +210,8 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    await _userManager.AddToRoleAsync(user, WC.Role_Customer);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -180,5 +267,21 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
             }
             return (IUserEmailStore<IdentityUser>)_userStore;
         }
+
+        public JsonResult OnGetGetStates(int countryId)
+        {
+            var stateList = _statesService.GetAll(
+                filter: s => s.CountryId == countryId).ToList();
+            return new JsonResult(stateList);
+
+        }
+        public JsonResult OnGetGetCities(int stateId)
+        {
+            var citiesList = _citiesService.GetAll(
+                filter: s => s.StateId == stateId).ToList();
+            return new JsonResult(citiesList);
+
+        }
+
     }
 }

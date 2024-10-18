@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Garden2024.Web.ViewModels.ApplicationUsers;
 using Garden2024.Web.ViewModels.Categories;
 using Garden2024.Web.ViewModels.Cities;
 using Garden2024.Web.ViewModels.Countries;
 using Garden2024.Web.ViewModels.Products;
+using Garden2024.Web.ViewModels.ShoppingCarts;
 using Garden2024.Web.ViewModels.States;
 using Garden2024.Web.ViewModels.Suppliers;
 using Gardens2024.Entities.Entities;
@@ -19,6 +21,26 @@ namespace Garden2024.Web.Mapping
             LoadCitiesMapping();
             LoadSuppliersMapping();
             LoadProductsMapping();
+            LoadApplicationUsersMapping();
+            LoadShoppingCartsMapping();
+        }
+
+        private void LoadShoppingCartsMapping()
+        {
+            CreateMap<ShoppingCartDetailVm, ShoppingCart>()
+                .ForMember(dest => dest.Product, opt => opt.Ignore())
+                .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore())
+                .ForMember(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId));
+
+        }
+
+        private void LoadApplicationUsersMapping()
+        {
+            CreateMap<ApplicationUser,ApplicationUserListVm>()
+                 .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country.CountryName))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State.StateName))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City.CityName));
+
         }
 
         private void LoadProductsMapping()
