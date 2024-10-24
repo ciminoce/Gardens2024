@@ -64,7 +64,7 @@
                         @if (User.IsInRole(WC.Role_Customer))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark"  asp-action="Index" asp-controller="ShoppingCarts" asp-area="Customer">
+                                <a class="nav-link text-dark"  href="@Url.Action("Index","ShoppingCarts",new{returnUrl=Url.Action("Index","Home",new{page=ViewBag.CurrentPage})})">
                                     <i class="bi bi-cart4"></i>
                                 </a>
                             </li>

@@ -41,7 +41,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
                 orderBy: o => o.OrderBy(p => p.ProductName),
                 propertiesNames: "Category");
             var productsVm = _mapper!.Map<List<ProductHomeIndexVm>>(products);
-            
+            ViewBag.CurrentPage=currentPage;
             return View(productsVm.ToPagedList(currentPage,pageSize));
         }
         public IActionResult Details(int? id, string? returnUrl=null)

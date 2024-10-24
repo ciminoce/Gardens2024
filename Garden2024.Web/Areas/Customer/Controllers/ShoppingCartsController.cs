@@ -21,7 +21,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? returnUrl=null)
         {
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity!;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)!.Value;
@@ -34,6 +34,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
                 ShoppingCarts = cartList,
                 OrderTotal = CalculateTotal(cartList)
             };
+            ViewBag.ReturnUrl = returnUrl;
             return View(shoppingVm);
         }
 

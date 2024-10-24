@@ -17,7 +17,7 @@
             <div class="card-body my-4">
                 <div class="row mb-3 pb-3">
                     <div class="col-md-2 offset-md-1">
-                        <a href="@Url.Action("Index","Home")" class="btn btn-outline-primary text-uppercase mb-5 btn-sm"><small>Continue Shopping</small></a>
+                        <a href="@(ViewBag.ReturnUrl??Url.Action("Index","Home"))" class="btn btn-outline-primary text-uppercase mb-5 btn-sm"><small>Continue Shopping</small></a>
                     </div>
                     <div class="col-md-10 offset-md-1">
 
