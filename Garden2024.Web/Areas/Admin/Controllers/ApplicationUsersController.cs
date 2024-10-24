@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Garden2024.Web.ViewModels.ApplicationUsers;
-using Garden2024.Web.ViewModels.Categories;
 using Gardens2024.Entities.Entities;
 using Gardens2024.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -57,6 +56,6 @@ namespace Garden2024.Web.Controllers
                     .ToPagedList(pageNumber, pageSize);
             return View(usersVm);
         }
-            
+
     }
 }
