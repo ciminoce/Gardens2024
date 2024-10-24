@@ -47,5 +47,36 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             }
             return total;
         }
+
+        public IActionResult Plus(int id, string? returnUrl = null)
+        {
+            var cartInDb= _cartsService!.Get(filter:c=>c.ShoppingCartId == id);
+            cartInDb!.Quantity += 1;
+            _cartsService.Save(cartInDb);
+            return RedirectToAction("Index", new {returnUrl});
+        }
+        public IActionResult Minus(int id, string? returnUrl = null)
+        {
+            var cartInDb = _cartsService!.Get(filter: c => c.ShoppingCartId == id);
+            cartInDb!.Quantity -= 1;
+            if (cartInDb.Quantity == 0)
+            {
+                _cartsService.Delete(cartInDb);
+            }
+            else
+            {
+                _cartsService.Save(cartInDb);
+
+            }
+            return RedirectToAction("Index", new { returnUrl });
+        }
+        public IActionResult Remove(int id, string? returnUrl = null)
+        {
+            var cartInDb = _cartsService!.Get(filter: c => c.ShoppingCartId == id);
+            cartInDb!.Quantity -= 1;
+            _cartsService.Delete(cartInDb);
+            return RedirectToAction("Index", new { returnUrl });
+        }
+
     }
 }

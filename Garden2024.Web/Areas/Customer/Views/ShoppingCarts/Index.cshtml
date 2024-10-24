@@ -46,16 +46,16 @@
                                             </h6>
                                         </div>
                                         <div class="btn-group" role="group">
-                                            <a class="btn btn-outline-primary bg-gradient py-2">
+                                            <a class="btn btn-outline-primary bg-gradient py-2" asp-action="Plus" asp-route-id="@item.ShoppingCartId" asp-route-returnUrl="@ViewBag.ReturnUrl">
                                                 <i class="bi bi-plus-square"></i>
                                             </a>
-                                            <a class="btn btn-outline-primary bg-gradient py-2">
+                                            <a class="btn btn-outline-primary bg-gradient py-2" asp-action="Minus" asp-route-id="@item.ShoppingCartId" asp-route-returnUrl="@ViewBag.ReturnUrl">
                                                 <i class="bi bi-dash-square"></i>
                                             </a>
                                         </div>
                                     </div>
                                     <div>
-                                        <a href="#" class="btn btn-danger bg-gradient py-2">
+                                        <a class="btn btn-danger bg-gradient py-2" asp-action="Remove" asp-route-id="@item.ShoppingCartId" asp-route-returnUrl="@ViewBag.ReturnUrl">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
                                     </div>
