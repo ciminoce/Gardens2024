@@ -127,6 +127,8 @@ namespace Garden2024.Web.Areas.Customer.Controllers
                 OrderHeader = new OrderHeaderEditVm()
                 {
                     OrderTotal = CalculateTotal(cartList),
+                    OrderDate = DateTime.Now,
+                    ShippingDate= DateTime.Now.AddDays(3),
                     OrderDetails = _mapper.Map<List<OrderDetail>>(cartList),
                     Countries = GetCountries(),
                     States = GetCountryStates(),
