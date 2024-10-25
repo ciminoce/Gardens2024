@@ -76,18 +76,32 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             ShoppingCart shoppingCart = _mapper!.Map<ShoppingCart>(shoppingVm);
             var cartInDb=_shoppingCartService.Get(filter:s=>s.ProductId==shoppingCart.ProductId &&
                     s.ApplicationUserId==shoppingCart.ApplicationUserId);
-            if (cartInDb== null)
+            var product = _productsService?.Get(filter: p => p.ProductId == shoppingVm.ProductId);
+
+            if (product.AvailableStock>=shoppingCart.Quantity)
             {
-                _shoppingCartService.Save(shoppingCart);
+                if (cartInDb == null)
+                {
+                    product.StockInCarts += shoppingCart.Quantity;
+                    shoppingCart.Product = product;
+                    _shoppingCartService.Save(shoppingCart);
+                }
+                else
+                {
+                    product.StockInCarts += shoppingCart.Quantity;
+                    cartInDb.Quantity += shoppingCart.Quantity;
+                    shoppingCart.Product = product;
+                    _shoppingCartService.Save(cartInDb);
+                }
+                TempData["success"] = "Product successfully added to shopping cart";
 
             }
             else
             {
-                cartInDb.Quantity += shoppingCart.Quantity;
-                _shoppingCartService.Save(cartInDb);
+                TempData["error"] = "Not enough stock!!";
+
             }
-            TempData["success"] = "Product successfully added to shopping cart";
-            if(returnUrl != null)
+            if (returnUrl != null)
             {
                 return Redirect(returnUrl);
             }

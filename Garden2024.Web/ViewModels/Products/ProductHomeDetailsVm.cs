@@ -10,6 +10,6 @@
         public decimal CashPrice { get; set; }
         public bool Suspended { get; set; }
         public string? ImageUrl { get; set; }
-        public int Stock { get; set; }
+        public double AvailableStock { get; set; }
     }
 }

@@ -86,14 +86,14 @@
 
                         @if (!Model.Product.Suspended)
                         {
-                            if (Model.Product.Stock > 0)
+                            if (Model.Product.AvailableStock > 0)
                             {
                                 <!-- Count Input -->
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <span class="border-0 fw-semibold">Stock</span>
-                                            <input class="form-control text-end" asp-for="@Model.Product.Stock" />
+                                            <input disabled class="form-control text-end" asp-for="@Model.Product.AvailableStock" />
                                         </div>
                                     </div>
                                 </div>
@@ -104,7 +104,7 @@
                                     <div class="col-md-4">
                                         <div class="input-group">
                                             <span class="input-group-text bg-primary text-white border-0 fw-semibold">Count</span>
-                                            <input asp-for="@Model.Quantity" type="number" value="1" class="form-control text-end" min="1" aria-label="Quantity" />
+                                            <input asp-for="@Model.Quantity" type="number" value="1" class="form-control text-end" min="1" max="@Model.Product.AvailableStock" aria-label="Quantity" />
                                         </div>
                                     </div>
                                 </div>

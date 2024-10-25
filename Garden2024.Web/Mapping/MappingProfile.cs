@@ -32,6 +32,11 @@ namespace Garden2024.Web.Mapping
                 .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore())
                 .ForMember(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId));
 
+            CreateMap<ShoppingCart, OrderDetail>()
+                .ForMember(dest => dest.OrderHeaderId, opt => opt.Ignore())
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => (src.Quantity == 1 ? src.Product.UnitPrice : src.Product.UnitPrice * 0.9M)));
         }
 
         private void LoadApplicationUsersMapping()

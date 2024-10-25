@@ -9,12 +9,15 @@ namespace Gardens2024.Services.Services
     public class ShoppingCartsService : IShoppingCartsService
     {
         private readonly IShoppingCartsRepository? _repository;
+        private readonly IProductsRepository? _productsRepository;
         private readonly IUnitOfWork? _unitOfWork;
 
         public ShoppingCartsService(IShoppingCartsRepository? repository,
+            IProductsRepository? productsRepository,
             IUnitOfWork? unitOfWork)
         {
             _repository = repository?? throw new ArgumentException("Dependencies not set");
+            _productsRepository = productsRepository ?? throw new ArgumentException("Dependencies not set");
             _unitOfWork = unitOfWork?? throw new ArgumentException("Dependencies not set");
         }
 
@@ -24,6 +27,7 @@ namespace Gardens2024.Services.Services
             {
                 _unitOfWork!.BeginTransaction();
                 _repository!.Delete(shoppingCart);
+                _productsRepository!.Update(shoppingCart.Product);
                 _unitOfWork!.Commit();
 
             }
@@ -64,6 +68,7 @@ namespace Gardens2024.Services.Services
                 {
                     _repository?.Update(shoppingCart);
                 }
+                _productsRepository?.Update(shoppingCart.Product);
                 _unitOfWork?.Commit();
 
             }

@@ -10,6 +10,8 @@
         public string? QuantityPerUnit { get; set; }
         public decimal UnitPrice { get; set; }
         public double Stock { get; set; }
+        public double StockInCarts { get; set; }
+        public double AvailableStock { get => Stock - StockInCarts; }
         public string? ImageUrl { get; set; }
         public bool Suspended { get; set; }
         public Category Category { get; set; } = null!;
