@@ -3,6 +3,7 @@
 	decimal price = 0m;
 }
 <form method="post">
+	<input type="hidden" asp-for="@Model.OrderHeader!.ApplicationUserId" />
 	<br />
 	<div class="container">
 		<div class="card shadow border-0">
@@ -98,6 +99,15 @@
 									<span asp-validation-for="@Model.OrderHeader.CityId" class="text-danger"></span>
 								</div>
 							</div>
+							<div class="row my-1">
+								<div class="col-3">
+									<label asp-for="@Model.OrderHeader!.ZipCode"></label>
+								</div>
+								<div class="col-9">
+									<input asp-for="@Model.OrderHeader!.ZipCode" class="form-control" />
+									<span class="text-danger" asp-validation-for="@Model.OrderHeader!.ZipCode"></span>
+								</div>
+							</div>
 
 						</div>
 						<div class="col-12 col-lg-5 offset-lg-1">
@@ -105,7 +115,7 @@
 								<span class="text-info">Order Summary:</span>
 							</h4>
 							<ul class="list-group mb-3">
-								@foreach (var item in Model.OrderHeader.OrderDetails)
+								@foreach (var item in Model.ShoppingCarts)
 								{
 									price = (item.Quantity == 1 ? item.Product!.UnitPrice : item.Product!.UnitPrice * 0.9m);
 
@@ -139,7 +149,7 @@
 					<div class="col-12 col-md-4">
 						<div class="row">
 							<div class="col-6">
-								<a class="btn btn-danger w-100" asp-action="CancelOrder">Cancel Order</a>
+								<a asp-action="OrderCancelled" class="btn btn-danger w-100" asp-action="CancelOrder">Cancel Order</a>
 							</div>
 							<div class="col-6">
 								<button type="submit" value="Place Order" class="btn btn-primary form-control w-100">Place Order</button>

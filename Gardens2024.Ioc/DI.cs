@@ -27,6 +27,9 @@ namespace Gardens2024.Ioc
             servicios.AddScoped<IApplicationUsersRepository, ApplicationUsersRepository>();
             servicios.AddScoped<IShoppingCartsRepository, ShoppingCartsRepository>();
 
+            servicios.AddScoped<IOrderHeadersRepository, OrderHeadersRepository>();
+            servicios.AddScoped<IOrderDetailsRepository, OrderDetailsRepository>();
+
             servicios.AddScoped<ICountriesService, CountriesService>();
             servicios.AddScoped<ICategoriesService, CategoriesService>();
 
@@ -40,6 +43,8 @@ namespace Gardens2024.Ioc
             servicios.AddScoped<IApplicationUsersService, ApplicationUsersService>();
 
             servicios.AddScoped<IShoppingCartsService, ShoppingCartsService>();
+
+            servicios.AddScoped<IOrderHeadersService, OrderHeadersService>();
             servicios.AddScoped<IUnitOfWork, UnitOfWork>();
             servicios.AddDbContext<Gardens2024DbContext>(options =>
             {

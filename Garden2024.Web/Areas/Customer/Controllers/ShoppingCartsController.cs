@@ -19,6 +19,8 @@ namespace Garden2024.Web.Areas.Customer.Controllers
         private readonly IStatesService? _statesService;
         private readonly ICitiesService? _citiesService;
         private readonly IApplicationUsersService? _applicationUsersService;
+        private readonly IOrderHeadersService? _orderHeadersService;
+
         private readonly IMapper? _mapper;
 
         public ShoppingCartsController(IShoppingCartsService? cartsService,
@@ -26,6 +28,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             IStatesService? statesService,
             ICitiesService? citiesService,
             IApplicationUsersService? applicationUsersService,
+            IOrderHeadersService? orderHeadersService,
             IMapper? mapper)
         {
             _cartsService = cartsService;
@@ -33,6 +36,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             _statesService = statesService ?? throw new ApplicationException("Dependencies not set");
             _citiesService = citiesService ?? throw new ApplicationException("Dependencies not set");
             _applicationUsersService = applicationUsersService ?? throw new ApplicationException("Dependencies not set");
+            _orderHeadersService = orderHeadersService ?? throw new ApplicationException("Dependencies not set");
             _mapper = mapper;
         }
 
@@ -129,7 +133,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
                     OrderTotal = CalculateTotal(cartList),
                     OrderDate = DateTime.Now,
                     ShippingDate= DateTime.Now.AddDays(3),
-                    OrderDetails = _mapper.Map<List<OrderDetail>>(cartList),
+                    //OrderDetails = _mapper.Map<List<OrderDetail>>(cartList),
                     Countries = GetCountries(),
                     States = GetCountryStates(),
                     Cities = GetStateCities(),
@@ -151,7 +155,57 @@ namespace Garden2024.Web.Areas.Customer.Controllers
 
             return View(shoppingVm);
         }
+        [HttpPost]
+        [ActionName("Summary")]
+        public IActionResult SummaryPOST(ShoppingCartListVm shoppingVm)
+        {
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity!;
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var cartList = _cartsService!.GetAll(
+                    filter: c => c.ApplicationUserId == claims!.Value,
+                    propertiesNames: "Product")!.ToList();
+            shoppingVm.OrderHeader!.OrderTotal = CalculateTotal(cartList);
+            shoppingVm.OrderHeader.OrderDate = DateTime.Now;
+            shoppingVm.OrderHeader.ShippingDate = DateTime.Now.AddDays(3);
+            shoppingVm.OrderHeader.OrderDetails = _mapper.Map<List<OrderDetail>>(cartList);
+            shoppingVm.OrderHeader.Countries = GetCountries();
+            shoppingVm.OrderHeader.States = GetCountryStates();
+            shoppingVm.OrderHeader.Cities = GetStateCities();
+            if (!ModelState.IsValid)
+            {
+                return View(shoppingVm);
+            }
+            OrderHeader orderHeader=_mapper.Map<OrderHeader>(shoppingVm.OrderHeader);
+            try
+            {
+                _orderHeadersService.Save(orderHeader);
+            }
+            catch (Exception ex)
+            {
 
+                ModelState.AddModelError(string.Empty,ex.Message);
+                return View(shoppingVm);
+            }
+            return RedirectToAction("OrderConfirmed",new {id=orderHeader.OrderHeaderId});
+        }
+        public IActionResult OrderConfirmed(int id)
+        {
+            return View(id);
+        }
+        public IActionResult OrderCancelled()
+        {
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity!;
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var cartList = _cartsService!.GetAll(
+                    filter: c => c.ApplicationUserId == claims!.Value,
+                    propertiesNames: "Product")!.ToList();
+            foreach (var item in cartList)
+            {
+                item.Product.StockInCarts -= item.Quantity;
+                _cartsService.Delete(item);
+            }
+            return View();
+        }
         private List<SelectListItem> GetCountries()
         {
             return _countriesService!.GetAll(

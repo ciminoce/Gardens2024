@@ -3,6 +3,7 @@ using Garden2024.Web.ViewModels.ApplicationUsers;
 using Garden2024.Web.ViewModels.Categories;
 using Garden2024.Web.ViewModels.Cities;
 using Garden2024.Web.ViewModels.Countries;
+using Garden2024.Web.ViewModels.OrderHeaders;
 using Garden2024.Web.ViewModels.Products;
 using Garden2024.Web.ViewModels.ShoppingCarts;
 using Garden2024.Web.ViewModels.States;
@@ -23,6 +24,14 @@ namespace Garden2024.Web.Mapping
             LoadProductsMapping();
             LoadApplicationUsersMapping();
             LoadShoppingCartsMapping();
+            LoadOrderHeadersMapping();
+        }
+
+        private void LoadOrderHeadersMapping()
+        {
+            CreateMap<OrderHeaderEditVm, OrderHeader>()
+                .ForMember(dest=>dest.OrderDetails,opt=>opt.MapFrom(
+                    src=>src.OrderDetails));
         }
 
         private void LoadShoppingCartsMapping()
