@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Country List";
+}
+<div class="container">
+    @Html.AntiForgeryToken()
+    <div class="row mb-3">
+        <div class="col-6">
+            <h3>Country List</h3>
+
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Countries" asp-action="UpSert" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>
+                Nuevo
+            </a>
+        </div>
+    </div>
+    <table id="countriesTable" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width:50%">Country</th>
+                <th style="width:25%">Actions</th>
+            </tr>
+        </thead>
+    </table>
+
+
+</div>
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="~/js/country.js"></script>
+}

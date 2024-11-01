@@ -95,7 +95,7 @@ namespace Garden2024.Web.Controllers
 
                 _countriesService.Save(Country);
                 TempData["success"] = "Record successfully added/edited";
-                return RedirectToAction("Index");
+                return RedirectToAction("List");
             }
             catch (Exception)
             {
@@ -140,5 +140,19 @@ namespace Garden2024.Web.Controllers
             }
         }
 
+        public IActionResult List()
+        {
+            return View();
+        }
+
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var countries=_countriesService?.GetAll(
+                    orderBy:o=>o.OrderBy(c=>c.CountryName));
+            return Json(new {data=countries});
+        }
+        #endregion
     }
 }

@@ -37,7 +37,6 @@
     </a>
 </div>
 <partial name="_ProductList" model="@Model.Products" />
-</table>
 <div class="d-flex">
     @Html.PagedListPager(Model.Products, page => Url.Action("Details",
     new { page ,

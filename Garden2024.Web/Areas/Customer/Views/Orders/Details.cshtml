@@ -1,0 +1,76 @@
+﻿@model OrderHeader
+@{
+    string formatDate(DateTime date)
+    {
+        return date.ToShortDateString();
+    }
+}
+<div>
+    <h4>Orders Details</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            <label>Order No."</label>
+        </dt>
+        <dd class="col-sm-4">
+            <input asp-for="OrderHeaderId" class="form-control form-control-sm" readonly />
+        </dd>
+        <dt class="col-sm-2">
+            <label >Order Date</label>
+        </dt>
+        <dd class="col-sm-4">
+            <input type="text" value="@formatDate(Model.OrderDate)" class="form-control form-control-sm" readonly />
+        </dd>
+        <dt class="col-sm-2">
+            <label >Shipping Date</label>
+        </dt>
+        <dd class="col-sm-4">
+            <input type="text" value="@formatDate(Model.ShippingDate)" class="form-control form-control-sm" readonly />
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index" class="btn btn-success btn-sm">
+        <i class="bi bi-backspace"></i>&nbsp;
+        Back to List
+    </a>
+</div>
+<table class="table table-bordered table-hover mt-3">
+    <thead>
+        <tr>
+            <th style="width:20%">Product</th>
+            <th style="width:20%">Unit Price</th>
+            <th style="width:15%">Quantity</th>
+            <th style="width:20%">Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderDetails)
+        {
+            <tr>
+                <td>
+                    @item.Product!.ProductName
+
+                </td>
+                <td class="text-end">
+                    @item.Price.ToString("C",System.Globalization.CultureInfo.CreateSpecificCulture("en-US"))
+                </td>
+                <td class="text-end">
+                    @item.Quantity
+                </td>
+                <td class="text-end" >
+                    @((item.Price * item.Quantity).ToString("C",System.Globalization.CultureInfo.CreateSpecificCulture("en-US")))
+                </td>
+
+            </tr>
+        }
+        <tr>
+            <td class="fw-bold" colspan="3">
+                Total:
+            </td>
+            <td class="text-end fw-bold">
+                @Model.OrderTotal.ToString("C",System.Globalization.CultureInfo.CreateSpecificCulture("en-US"))
+            </td>
+        </tr>
+    </tbody>
+</table>
