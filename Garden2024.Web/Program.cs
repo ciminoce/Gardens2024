@@ -1,5 +1,6 @@
 using Gardens2024.Data;
 using Gardens2024.Ioc;
+using Gardens2024.Services.Services;
 using Gardens2024.Utilities;
 using Microsoft.AspNetCore.Identity;
 namespace Garden2024.Web
@@ -9,6 +10,7 @@ namespace Garden2024.Web
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<Gardens2024DbContext>()
@@ -27,6 +29,7 @@ namespace Garden2024.Web
             DI.ConfigurarServicios(builder.Services, builder.Configuration);
             // Configurar AutoMapper
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
+            builder.Services.AddHostedService<ReleaseStockService>();
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())

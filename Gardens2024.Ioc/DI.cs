@@ -45,6 +45,8 @@ namespace Gardens2024.Ioc
             servicios.AddScoped<IShoppingCartsService, ShoppingCartsService>();
 
             servicios.AddScoped<IOrderHeadersService, OrderHeadersService>();
+            //servicios.AddHostedService<ReleaseStockService>();
+
             servicios.AddScoped<IUnitOfWork, UnitOfWork>();
             servicios.AddDbContext<Gardens2024DbContext>(options =>
             {

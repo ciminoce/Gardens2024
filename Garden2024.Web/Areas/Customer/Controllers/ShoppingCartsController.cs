@@ -11,7 +11,7 @@ using System.Security.Claims;
 namespace Garden2024.Web.Areas.Customer.Controllers
 {
     [Area("Customer")]
-    [Authorize(Roles ="Customer")]
+    [Authorize(Roles = "Customer")]
     public class ShoppingCartsController : Controller
     {
         private readonly IShoppingCartsService? _cartsService;
@@ -40,7 +40,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index(string? returnUrl=null)
+        public IActionResult Index(string? returnUrl = null)
         {
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity!;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)!.Value;
@@ -66,21 +66,22 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             var total = 0M;
             foreach (var item in cartList)
             {
-                total +=(item.Quantity==1?item.Product.UnitPrice:item.Product.UnitPrice*0.9M) * item.Quantity;
+                total += (item.Quantity == 1 ? item.Product.UnitPrice : item.Product.UnitPrice * 0.9M) * item.Quantity;
             }
             return total;
         }
 
         public IActionResult Plus(int id, string? returnUrl = null)
         {
-            var cartInDb= _cartsService!.Get(filter:c=>c.ShoppingCartId == id,
-                propertiesNames:"Product");
+            var cartInDb = _cartsService!.Get(filter: c => c.ShoppingCartId == id, tracked: false,
+                propertiesNames: "Product");
 
 
-            if (cartInDb.Product.AvailableStock>=1)
+            if (cartInDb!.Product.AvailableStock >= 1)
             {
                 cartInDb.Product.StockInCarts += 1;
                 cartInDb!.Quantity += 1;
+                cartInDb.LastUpdated = DateTime.Now;
                 _cartsService.Save(cartInDb);
 
             }
@@ -88,15 +89,15 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             {
                 TempData["error"] = "Not enough stock available!!";
             }
-            return RedirectToAction("Index", new {returnUrl});
+            return RedirectToAction("Index", new { returnUrl });
         }
         public IActionResult Minus(int id, string? returnUrl = null)
         {
             var cartInDb = _cartsService!.Get(filter: c => c.ShoppingCartId == id,
-                propertiesNames:"Product");
+                propertiesNames: "Product");
             cartInDb!.Quantity -= 1;
             cartInDb.Product.StockInCarts -= 1;
-           
+            cartInDb.LastUpdated = DateTime.Now;
             if (cartInDb.Quantity == 0)
             {
                 _cartsService.Delete(cartInDb);
@@ -111,14 +112,14 @@ namespace Garden2024.Web.Areas.Customer.Controllers
         public IActionResult Remove(int id, string? returnUrl = null)
         {
             var cartInDb = _cartsService!.Get(filter: c => c.ShoppingCartId == id,
-                    propertiesNames:"Product");
+                    propertiesNames: "Product");
 
             cartInDb!.Product.StockInCarts -= cartInDb.Quantity;
             _cartsService.Delete(cartInDb);
             return RedirectToAction("Index", new { returnUrl });
         }
 
-        public IActionResult Summary(string?returnUrl=null)
+        public IActionResult Summary(string? returnUrl = null)
         {
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity!;
             var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
@@ -132,7 +133,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
                 {
                     OrderTotal = CalculateTotal(cartList),
                     OrderDate = DateTime.Now,
-                    ShippingDate= DateTime.Now.AddDays(3),
+                    ShippingDate = DateTime.Now.AddDays(3),
                     //OrderDetails = _mapper.Map<List<OrderDetail>>(cartList),
                     Countries = GetCountries(),
                     States = GetCountryStates(),
@@ -147,7 +148,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             shoppingVm.OrderHeader.Address = user.Address;
             shoppingVm.OrderHeader.ZipCode = user.ZipCode;
             shoppingVm.OrderHeader.CountryId = user.CountryId;
-            shoppingVm.OrderHeader.StateId=user.StateId;
+            shoppingVm.OrderHeader.StateId = user.StateId;
             shoppingVm.OrderHeader.CityId = user.CityId;
             shoppingVm.OrderHeader.Phone = user.Phone;
 
@@ -175,7 +176,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             {
                 return View(shoppingVm);
             }
-            OrderHeader orderHeader=_mapper.Map<OrderHeader>(shoppingVm.OrderHeader);
+            OrderHeader orderHeader = _mapper.Map<OrderHeader>(shoppingVm.OrderHeader);
             try
             {
                 _orderHeadersService.Save(orderHeader);
@@ -183,10 +184,10 @@ namespace Garden2024.Web.Areas.Customer.Controllers
             catch (Exception ex)
             {
 
-                ModelState.AddModelError(string.Empty,ex.Message);
+                ModelState.AddModelError(string.Empty, ex.Message);
                 return View(shoppingVm);
             }
-            return RedirectToAction("OrderConfirmed",new {id=orderHeader.OrderHeaderId});
+            return RedirectToAction("OrderConfirmed", new { id = orderHeader.OrderHeaderId });
         }
         public IActionResult OrderConfirmed(int id)
         {
@@ -261,6 +262,17 @@ namespace Garden2024.Web.Areas.Customer.Controllers
                 }).ToList();
 
         }
+        #region API CALLS
+        [HttpGet]
+        public JsonResult GetCartItemCount()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Json(0);
 
+            var itemCount = _cartsService!.GetAll(filter: sc => sc.ApplicationUserId == userId)!
+                                                     .Sum(sc => sc.Quantity);
+            return Json(itemCount);
+        }
+        #endregion
     }
 }

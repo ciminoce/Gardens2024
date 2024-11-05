@@ -1,5 +1,6 @@
 ﻿using Gardens2024.Data.Interfaces;
 using Gardens2024.Entities.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gardens2024.Data.Repositories
 {
@@ -16,6 +17,16 @@ namespace Gardens2024.Data.Repositories
 
             _db.ShoppingCarts.Update(shoppingCart);
 
+        }
+
+        // Nuevo método para obtener carritos inactivos
+        public IEnumerable<ShoppingCart> GetInactiveCarts(DateTime cutoffTime)
+        {
+            return _db.ShoppingCarts
+                .Include(sc => sc.Product)
+                .Where(sc => sc.ProductId == sc.Product.ProductId
+                             && sc.LastUpdated < cutoffTime)
+                .ToList();
         }
     }
 }

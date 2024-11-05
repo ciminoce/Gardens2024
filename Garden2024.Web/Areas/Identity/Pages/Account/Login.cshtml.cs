@@ -2,19 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using Gardens2024.Utilities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using Gardens2024.Utilities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Garden2024.Web.Areas.Identity.Pages.Account
 {
@@ -25,7 +18,7 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
         private readonly ILogger<LoginModel> _logger;
 
         public LoginModel(SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,ILogger<LoginModel> logger)
+            UserManager<IdentityUser> userManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -121,7 +114,7 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
                     _logger.LogInformation("User logged in.");
                     // Obtener el usuario actual logueado
                     var user = await _userManager.FindByEmailAsync(Input.Email);
-
+                    
                     // Verificar si el usuario tiene el rol de Admin
                     if (await _userManager.IsInRoleAsync(user, WC.Role_Admin))
                     {
@@ -130,7 +123,6 @@ namespace Garden2024.Web.Areas.Identity.Pages.Account
                     }
                     return LocalRedirect(returnUrl);
 
-                    return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {

@@ -41,7 +41,7 @@ namespace Garden2024.Web.Areas.Customer.Controllers
         }
         #region API CALLS
         [HttpGet]
-        public IActionResult GetAll()
+        public JsonResult GetAll()
         {
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity!;
             var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);

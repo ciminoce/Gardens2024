@@ -62,6 +62,9 @@
                                 <a class="nav-link text-dark" asp-area="Admin" asp-controller="ApplicationUsers" asp-action="Index">Customers</a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Orders" asp-action="Index">Sales</a>
+                            </li>
 
                         }
                         @if (User.IsInRole(WC.Role_Customer))
@@ -69,6 +72,7 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark"  href="@Url.Action("Index","ShoppingCarts",new{returnUrl=Url.Action("Index","Home",new{page=ViewBag.CurrentPage})})">
                                     <i class="bi bi-cart4"></i>
+                                    <span id="cart-item-count" class="badge bg-primary">0</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -103,3 +107,25 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+@if(User.IsInRole("Customer")){
+    <script>
+        $(document).ready(function () {
+            updateCartItemCount();
+
+            function updateCartItemCount() {
+                $.ajax({
+                    url: '@Url.Action("GetCartItemCount", "ShoppingCarts")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#cart-item-count').text(data);
+                    },
+                    error: function () {
+                        console.log('Error fetching cart item count');
+                    }
+                });
+            }
+
+        });
+    </script>
+
+}

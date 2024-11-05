@@ -23,7 +23,7 @@ namespace Gardens2024.Entities.Entities
         public Country Country { get; set; } = null!;
         public State State { get; set; } = null!;
         public City City { get; set; } = null!;
-
+        public List<OrderHeader> OrderHeaders { get; set; } = new List<OrderHeader>();
     }
 
 }
